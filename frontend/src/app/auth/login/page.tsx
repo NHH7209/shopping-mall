@@ -2,13 +2,30 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
+  const { login } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: auth 모듈 구현 후 JWT 로그인 API 연동
+    setError('');
+    setLoading(true);
+    try {
+      await login(form.email, form.password);
+      const redirect = searchParams.get('redirect') ?? '/';
+      router.replace(redirect);
+    } catch (err: any) {
+      setError(err.response?.data?.message ?? '로그인에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -40,11 +57,14 @@ export default function LoginPage() {
             />
           </div>
 
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 text-sm font-medium mt-2 transition-colors"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 text-sm font-medium mt-2 transition-colors disabled:opacity-50"
           >
-            로그인
+            {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
 

@@ -2,22 +2,32 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function SignupPage() {
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
-  });
+  const { signup } = useAuth();
+  const router = useRouter();
+  const [form, setForm] = useState({ name: '', email: '', password: '', passwordConfirm: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (form.password !== form.passwordConfirm) {
-      alert('비밀번호가 일치하지 않습니다.');
+      setError('비밀번호가 일치하지 않습니다.');
       return;
     }
-    // TODO: auth 모듈 구현 후 회원가입 API 연동
+    setError('');
+    setLoading(true);
+    try {
+      await signup(form.name, form.email, form.password);
+      router.replace('/');
+    } catch (err: any) {
+      setError(err.response?.data?.message ?? '회원가입에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -71,11 +81,14 @@ export default function SignupPage() {
             />
           </div>
 
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 text-sm font-medium mt-2 transition-colors"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 text-sm font-medium mt-2 transition-colors disabled:opacity-50"
           >
-            회원가입
+            {loading ? '처리 중...' : '회원가입'}
           </button>
         </form>
 
