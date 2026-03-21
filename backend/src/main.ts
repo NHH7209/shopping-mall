@@ -14,7 +14,7 @@ async function bootstrap() {
   // 서버 컴포넌트는 Next.js 서버가 호출하므로 CORS 제한이 없지만
   // 'use client' 컴포넌트는 브라우저가 직접 호출하므로 허용해줘야 함
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://shopping-mall-frontend-nhh.vercel.app'],
     credentials: true, // HttpOnly 쿠키 전달을 위해 필요
   });
 
