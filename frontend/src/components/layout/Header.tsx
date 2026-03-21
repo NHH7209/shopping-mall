@@ -1,8 +1,15 @@
+'use client';
+
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
+import { useAuthStore } from "@/store/authStore";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header() {
+  const user = useAuthStore((s) => s.user);
+  const { logout } = useAuth();
+
   return (
     <header className="min-w-[1024px] w-full h-24 bg-white fixed top-0 z-50 flex items-center border-b border-gray-200">
       <div className="w-full max-w-[1200px] mx-auto px-8 flex items-center justify-between">
@@ -16,20 +23,39 @@ export default function Header() {
 
         {/* 우측 메뉴 */}
         <div className="flex items-center gap-4">
-          {/* 회원가입 */}
-          {/* 로그인 */}
-          <Link
-            href="/auth/login"
-            className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
-          >
-            로그인
-          </Link>
-          <Link
-            href="/auth/signup"
-            className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
-          >
-            회원가입
-          </Link>
+          {user ? (
+            <>
+              <span className="text-sm text-gray-700">{user.name}님</span>
+              <Link
+                href="/mypage"
+                className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
+              >
+                마이페이지
+              </Link>
+              <button
+                onClick={logout}
+                className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
+              >
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/auth/signup"
+                className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
+              >
+                회원가입
+              </Link>
+            </>
+          )}
+
           {/* 장바구니 */}
           <Link
             href="/cart"
