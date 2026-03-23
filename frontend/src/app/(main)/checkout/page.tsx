@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CartItem } from '@/types/cart';
 import { Suspense } from 'react';
+import { useAuthStore } from '@/store/authStore';
 
 interface Address {
   id: number;
@@ -23,6 +24,7 @@ function CheckoutContent() {
   const isBuyNow = searchParams.get('mode') === 'buyNow';
 
   const { items: cartItems, clearCart } = useCartStore();
+  const user = useAuthStore((s) => s.user);
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -97,7 +99,7 @@ function CheckoutContent() {
       sessionStorage.removeItem('buyNow');
 
       const toss = await loadTossPayments(process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!);
-      const payment = toss.payment({ customerKey: `user_${order.id}` });
+      const payment = toss.payment({ customerKey: `user_${user?.id}` });
 
       await payment.requestPayment({
         method: 'CARD',
@@ -111,8 +113,9 @@ function CheckoutContent() {
       });
     } catch (err: any) {
       if (err?.code !== 'USER_CANCEL') {
-        const message = err?.response?.data?.message ?? '오류가 발생했습니다. 다시 시도해주세요.';
-        alert(message);
+        const message = err?.message ?? err?.response?.data?.message ?? '오류가 발생했습니다. 다시 시도해주세요.';
+        router.push(`/checkout/fail?message=${encodeURIComponent(message)}`);
+        return;
       }
       setSubmitting(false);
     }
