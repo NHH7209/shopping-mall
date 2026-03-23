@@ -17,6 +17,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   const [selectedImg, setSelectedImg] = useState(initImage);
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
@@ -27,7 +28,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     setAdding(true);
     try {
       await addItem(product.id, qty);
-      router.push('/cart');
+      setShowModal(true);
     } finally {
       setAdding(false);
     }
@@ -45,6 +46,36 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   );
 
   return (
+    <>
+    {/* 장바구니 담기 완료 모달 */}
+    {showModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/30" onClick={() => setShowModal(false)} />
+        <div className="relative bg-white rounded-2xl p-8 w-80 text-center shadow-xl">
+          <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 className="text-base font-bold text-gray-900 mb-1">장바구니에 담았습니다</h3>
+          <p className="text-sm text-gray-400 mb-6">{product.name}</p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowModal(false)}
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              계속 쇼핑
+            </button>
+            <button
+              onClick={() => router.push('/cart')}
+              className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+            >
+              장바구니 보기
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     <div className="flex gap-12">
       {/* 이미지 영역 */}
       <div className="w-1/2">
@@ -167,5 +198,6 @@ export default function ProductDetailClient({ product }: { product: Product }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
