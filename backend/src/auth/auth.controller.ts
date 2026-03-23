@@ -40,10 +40,11 @@ export class AuthController {
   }
 
   private setRefreshTokenCookie(res: any, token: string) {
+    const isProduction = process.env.NODE_ENV === 'production';
     res.cookie('refresh_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax', // 크로스 도메인(배포)에서는 none 필요
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   }
