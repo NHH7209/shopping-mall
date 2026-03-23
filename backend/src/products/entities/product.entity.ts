@@ -33,6 +33,9 @@ export class Product {
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ nullable: true })
+  category: string;
+
   // 상품 상세 페이지 조회 횟수 — 기본값 0
   // 누군가 /products/:id 에 들어올 때마다 +1 증가시켜서 인기도 측정에 사용
   @Column({ default: 0 })

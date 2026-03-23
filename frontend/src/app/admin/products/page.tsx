@@ -15,6 +15,7 @@ export default function AdminProductsPage() {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/products/admin`,
+        { cache: 'no-store' },
       );
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const data = await res.json();

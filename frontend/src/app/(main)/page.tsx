@@ -12,7 +12,7 @@ async function getRanking(): Promise<Product[]> {
 
 async function getTrending(): Promise<Product[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/trending`, {
-    next: { revalidate: 60 },
+    cache: 'no-store',
   });
   return res.json();
 }
@@ -22,8 +22,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 배너 — 화면 전체 너비, 최소 1024px */}
-      <div className="w-full min-w-[1024px]">
+      {/* 배너 */}
+      <div className="w-full">
         <Banner />
       </div>
 
@@ -37,7 +37,7 @@ export default async function HomePage() {
             <div className="flex-1 h-px bg-gradient-to-l from-transparent to-sky-200" />
           </div>
 
-          <div className="grid grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
             {ranking.map((product, index) => (
               <Link key={product.id} href={`/products/${product.id}`}>
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -73,7 +73,7 @@ export default async function HomePage() {
             <div className="flex-1 h-px bg-gradient-to-l from-transparent to-sky-200" />
           </div>
 
-          <div className="grid grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
             {trending.map((product) => (
               <Link key={product.id} href={`/products/${product.id}`}>
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">

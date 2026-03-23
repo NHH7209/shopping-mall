@@ -110,7 +110,10 @@ function CheckoutContent() {
         failUrl: `${window.location.origin}/checkout/fail`,
       });
     } catch (err: any) {
-      if (err?.code !== 'USER_CANCEL') alert('오류가 발생했습니다. 다시 시도해주세요.');
+      if (err?.code !== 'USER_CANCEL') {
+        const message = err?.response?.data?.message ?? '오류가 발생했습니다. 다시 시도해주세요.';
+        alert(message);
+      }
       setSubmitting(false);
     }
   };

@@ -24,6 +24,13 @@ export class OrdersService {
       throw new BadRequestException('장바구니가 비어있습니다.');
     }
 
+    // 비활성 상품 체크
+    const inactiveItems = cart.items.filter((item) => !item.product.isActive);
+    if (inactiveItems.length > 0) {
+      const names = inactiveItems.map((item) => item.product.name).join(', ');
+      throw new BadRequestException(`현재 판매 중단된 상품이 있습니다: ${names}`);
+    }
+
     // 총 금액 계산
     const totalPrice = cart.items.reduce(
       (sum, item) => sum + item.product.price * item.quantity,

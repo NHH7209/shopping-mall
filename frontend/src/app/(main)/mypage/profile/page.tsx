@@ -1,25 +1,53 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuthStore } from '@/store/authStore';
+import api from '@/lib/api';
 
 export default function ProfilePage() {
-  // TODO: auth 구현 후 실제 유저 정보로 교체
-  const [form, setForm] = useState({
-    name: '홍길동',
-    email: 'hong@example.com',
-    currentPassword: '',
-    newPassword: '',
-    newPasswordConfirm: '',
-  });
+  const user = useAuthStore((s) => s.user);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const accessToken = useAuthStore((s) => s.accessToken);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [name, setName] = useState(user?.name ?? '');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.newPassword && form.newPassword !== form.newPasswordConfirm) {
+
+    if (newPassword && newPassword !== newPasswordConfirm) {
       alert('새 비밀번호가 일치하지 않습니다.');
       return;
     }
-    // TODO: users API 연동
-    alert('저장됐습니다.');
+
+    const body: Record<string, string> = {};
+    if (name && name !== user?.name) body.name = name;
+    if (newPassword) {
+      body.currentPassword = currentPassword;
+      body.newPassword = newPassword;
+    }
+
+    if (Object.keys(body).length === 0) {
+      alert('변경된 내용이 없습니다.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const { data } = await api.patch('/users/profile', body);
+      setAuth({ ...user!, name: data.name }, accessToken!);
+      setCurrentPassword('');
+      setNewPassword('');
+      setNewPasswordConfirm('');
+      alert('저장됐습니다.');
+    } catch (err: any) {
+      alert(err.response?.data?.message ?? '저장에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,17 +63,16 @@ export default function ProfilePage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
               <input
                 type="text"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-900"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
-              {/* 이메일은 변경 불가 */}
               <input
                 type="email"
-                value={form.email}
+                value={user?.email ?? ''}
                 disabled
                 className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm bg-gray-50 text-gray-400"
               />
@@ -61,8 +88,8 @@ export default function ProfilePage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">현재 비밀번호</label>
               <input
                 type="password"
-                value={form.currentPassword}
-                onChange={(e) => setForm({ ...form, currentPassword: e.target.value })}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-900"
                 placeholder="현재 비밀번호를 입력하세요"
               />
@@ -71,8 +98,8 @@ export default function ProfilePage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">새 비밀번호</label>
               <input
                 type="password"
-                value={form.newPassword}
-                onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-900"
                 placeholder="새 비밀번호를 입력하세요"
               />
@@ -81,8 +108,8 @@ export default function ProfilePage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">새 비밀번호 확인</label>
               <input
                 type="password"
-                value={form.newPasswordConfirm}
-                onChange={(e) => setForm({ ...form, newPasswordConfirm: e.target.value })}
+                value={newPasswordConfirm}
+                onChange={(e) => setNewPasswordConfirm(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-900"
                 placeholder="새 비밀번호를 다시 입력하세요"
               />
@@ -92,9 +119,10 @@ export default function ProfilePage() {
 
         <button
           type="submit"
-          className="w-full bg-gray-900 text-white py-3 rounded-xl hover:bg-gray-700 text-sm font-medium"
+          disabled={loading}
+          className="w-full bg-gray-900 text-white py-3 rounded-xl hover:bg-gray-700 text-sm font-medium disabled:opacity-50"
         >
-          저장하기
+          {loading ? '저장 중...' : '저장하기'}
         </button>
       </form>
     </div>

@@ -1,7 +1,7 @@
-import Link from 'next/link';
+'use client';
 
-// TODO: auth 구현 후 실제 유저 정보로 교체
-const MOCK_USER = { name: '홍길동', email: 'hong@example.com' };
+import Link from 'next/link';
+import { useAuthStore } from '@/store/authStore';
 
 const menuItems = [
   { href: '/mypage/orders', label: '주문 내역', desc: '주문 현황을 확인하세요', icon: '📦' },
@@ -10,12 +10,14 @@ const menuItems = [
 ];
 
 export default function MypagePage() {
+  const user = useAuthStore((s) => s.user);
+
   return (
     <div>
       {/* 유저 정보 */}
       <div className="bg-gray-50 rounded-xl px-6 py-5 mb-6">
-        <p className="text-lg font-bold text-gray-900">{MOCK_USER.name}</p>
-        <p className="text-sm text-gray-500 mt-0.5">{MOCK_USER.email}</p>
+        <p className="text-lg font-bold text-gray-900">{user?.name}</p>
+        <p className="text-sm text-gray-500 mt-0.5">{user?.email}</p>
       </div>
 
       {/* 메뉴 카드 */}
@@ -35,10 +37,6 @@ export default function MypagePage() {
           </Link>
         ))}
       </div>
-
-      <button className="mt-8 text-sm text-gray-400 hover:text-red-400">
-        로그아웃
-      </button>
     </div>
   );
 }

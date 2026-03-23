@@ -91,6 +91,13 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       {/* 상품 정보 */}
       <div className="w-1/2 flex flex-col">
         <div className="flex-1">
+          {/* 카테고리 */}
+          {product.category && (
+            <span className="inline-block text-xs font-medium text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full mb-3">
+              {product.category}
+            </span>
+          )}
+
           {/* 상품명 */}
           <h1 className="text-3xl font-bold text-gray-900 mb-3">
             {product.name}

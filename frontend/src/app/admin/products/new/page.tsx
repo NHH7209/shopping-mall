@@ -11,14 +11,18 @@ interface ImageInput {
   uploading: boolean; // 업로드 진행 중 여부
 }
 
+const CATEGORIES = ["스킨케어", "클렌징", "선케어", "메이크업", "마스크팩", "에센스/세럼", "헤어케어", "바디케어"];
+
 export default function AdminProductNewPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
     name: '',
     price: '',
     stock: '',
     description: '',
+    category: '',
   });
   const [images, setImages] = useState<ImageInput[]>([]);
 
@@ -85,6 +89,7 @@ export default function AdminProductNewPage() {
         price: Number(form.price),
         stock: Number(form.stock),
         description: form.description,
+        category: form.category || undefined,
         images: validImages.map(({ url, isMain, sortOrder }) => ({ url, isMain, sortOrder })),
       }),
     });
@@ -138,6 +143,19 @@ export default function AdminProductNewPage() {
                   placeholder="0"
                 />
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
+              <select
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-900 bg-white"
+              >
+                <option value="">카테고리 선택</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">상품 설명</label>

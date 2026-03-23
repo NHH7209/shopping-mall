@@ -12,6 +12,7 @@ export interface Product {
   price: number;
   stock: number;
   isActive: boolean;
+  category: string | null;
   viewCount: number;  // 상품 상세 조회 횟수
   salesCount: number; // 판매 횟수
   createdAt: string;

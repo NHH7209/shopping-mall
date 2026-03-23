@@ -5,6 +5,7 @@ import {
   Patch,
   Delete,
   Param,
+  Query,
   Body,
   UseInterceptors,
   UploadedFile,
@@ -23,10 +24,10 @@ export class ProductsController {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  // GET /products — 고객용 활성 상품 목록
+  // GET /products — 고객용 활성 상품 목록 (?q=검색어&category=카테고리)
   @Get()
-  findAll(): Promise<Product[]> {
-    return this.productsService.findAll();
+  findAll(@Query('q') q?: string, @Query('category') category?: string): Promise<Product[]> {
+    return this.productsService.findAll(q, category);
   }
 
   // ⚠️ 주의: 문자열 경로('admin', 'ranking', 'trending')는 반드시 ':id' 위에 있어야 함

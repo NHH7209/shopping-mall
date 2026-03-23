@@ -1,16 +1,36 @@
-// 이미지 하나의 데이터 형태를 정의하는 DTO
+import { IsBoolean, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+
 export class CreateProductImageDto {
-  url: string;       // 이미지 URL
-  isMain: boolean;   // 대표 이미지 여부
-  sortOrder: number; // 정렬 순서
+  @IsString()
+  url: string;
+
+  @IsBoolean()
+  isMain: boolean;
+
+  @IsNumber()
+  sortOrder: number;
 }
 
-// 상품 생성 요청 시 받을 데이터 형태를 정의하는 DTO
-// DTO(Data Transfer Object): API 요청/응답 데이터의 구조를 타입으로 정의한 클래스
 export class CreateProductDto {
+  @IsString()
   name: string;
-  description?: string; // ?는 선택값 — 없어도 됨
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsNumber()
+  @Min(0)
   price: number;
+
+  @IsNumber()
+  @Min(0)
   stock: number;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
   images?: CreateProductImageDto[];
 }

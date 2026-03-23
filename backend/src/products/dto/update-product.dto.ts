@@ -1,15 +1,43 @@
-// 수정은 모든 필드가 선택값 (일부만 바꿀 수 있어야 하므로)
+import { IsBoolean, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+
 export class UpdateProductImageDto {
+  @IsString()
   url: string;
+
+  @IsBoolean()
   isMain: boolean;
+
+  @IsNumber()
   sortOrder: number;
 }
 
 export class UpdateProductDto {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
   price?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
   stock?: number;
-  isActive?: boolean;        // 수정에서만 활성/비활성 변경 가능
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
   images?: UpdateProductImageDto[];
 }

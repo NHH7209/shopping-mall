@@ -17,13 +17,22 @@ export class ProductsService {
     private readonly productImageRepository: Repository<ProductImage>,
   ) {}
 
-  // 고객용: 활성 상품 목록만
-  async findAll(): Promise<Product[]> {
-    return this.productRepository.find({
-      where: { isActive: true },
-      order: { createdAt: 'DESC' },
-      relations: ['images'],
-    });
+  // 고객용: 활성 상품 목록 (검색어, 카테고리 필터 지원)
+  async findAll(q?: string, category?: string): Promise<Product[]> {
+    const qb = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.images', 'images')
+      .where('product.isActive = :isActive', { isActive: true });
+
+    if (category) {
+      qb.andWhere('product.category = :category', { category });
+    }
+
+    if (q) {
+      qb.andWhere('product.name ILIKE :q', { q: `%${q}%` });
+    }
+
+    return qb.orderBy('product.createdAt', 'DESC').getMany();
   }
 
   // 어드민용: 비활성 상품 포함 전체 목록
@@ -82,6 +91,7 @@ export class ProductsService {
       description: dto.description,
       price: dto.price,
       stock: dto.stock,
+      category: dto.category,
     });
     const savedProduct = await this.productRepository.save(product);
 
@@ -113,6 +123,7 @@ export class ProductsService {
       ...(dto.price !== undefined && { price: dto.price }),
       ...(dto.stock !== undefined && { stock: dto.stock }),
       ...(dto.isActive !== undefined && { isActive: dto.isActive }),
+      ...(dto.category !== undefined && { category: dto.category }),
     });
 
     // 이미지 배열이 전달됐으면 기존 이미지를 전부 지우고 새로 교체

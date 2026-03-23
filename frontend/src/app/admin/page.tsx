@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
 import { Product } from '@/types/product';
 import { Order, ORDER_STATUS_LABEL } from '@/types/order';
 
@@ -13,9 +15,17 @@ interface Stats {
 }
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
+  const logout = useAuthStore((s) => s.logout);
   const [products, setProducts] = useState<Product[]>([]);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
+
+  const handleLogout = async () => {
+    await api.post('/auth/logout').catch(() => {});
+    logout();
+    router.replace('/auth/login');
+  };
 
   useEffect(() => {
     api.get(`${process.env.NEXT_PUBLIC_API_URL}/products/admin`).then(({ data }) => setProducts(data)).catch(() => {});
@@ -29,7 +39,12 @@ export default function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">대시보드</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
+        <button onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-500 transition-colors">
+          로그아웃
+        </button>
+      </div>
 
       {/* 통계 카드 */}
       <div className="grid grid-cols-4 gap-5 mb-10">

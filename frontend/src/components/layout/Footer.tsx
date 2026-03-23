@@ -1,9 +1,10 @@
 import Link from "next/link";
 
 const skills = {
-  Frontend: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
-  Backend: ["NestJS", "TypeORM", "PostgreSQL"],
-  Infra: ["Cloudinary", "Git"],
+  Frontend: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Zustand", "Axios"],
+  Backend: ["NestJS", "TypeORM", "PostgreSQL", "JWT", "Passport", "Bcrypt", "class-validator", "Multer"],
+  결제: ["Toss Payments"],
+  Infra: ["Vercel", "Railway", "Cloudinary", "Git"],
 };
 
 export default function Footer() {

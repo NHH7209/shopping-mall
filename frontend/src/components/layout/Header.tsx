@@ -13,18 +13,18 @@ export default function Header() {
   const cartCount = useCartStore(selectCartCount);
 
   return (
-    <header className="min-w-[1024px] w-full h-24 bg-white fixed top-0 z-50 flex items-center border-b border-gray-200">
-      <div className="w-full max-w-[1200px] mx-auto px-8 flex items-center justify-between">
-        {/* 로고 */}
-        <Link href="/">
-          <Image src="/logo.png" alt="로고" width={150} height={50} />
-        </Link>
-
-        {/* 검색바 — 클라이언트 컴포넌트로 분리 (useRouter 사용) */}
-        <SearchBar />
+    <header className="w-full h-24 bg-white fixed top-0 z-50 flex items-center border-b border-gray-200">
+      <div className="w-full max-w-[1200px] mx-auto px-8 flex items-center justify-between gap-6">
+        {/* 로고 + 검색바 */}
+        <div className="flex items-center gap-8 flex-shrink-0">
+          <Link href="/">
+            <Image src="/logo.png" alt="로고" width={150} height={50} />
+          </Link>
+          <SearchBar />
+        </div>
 
         {/* 우측 메뉴 */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-shrink-0 whitespace-nowrap">
           {user ? (
             <>
               <span className="text-sm text-gray-700">{user.name}님</span>

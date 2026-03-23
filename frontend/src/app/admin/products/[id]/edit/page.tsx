@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 // useRouter: 페이지 이동 / useParams: URL의 [id] 값 읽기
 import { useRouter, useParams } from 'next/navigation';
+import api from '@/lib/api';
 import { Product } from '@/types/product';
 
 interface ImageInput {
@@ -19,12 +20,15 @@ export default function AdminProductEditPage() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
+  const CATEGORIES = ["스킨케어", "클렌징", "선케어", "메이크업", "마스크팩", "에센스/세럼", "헤어케어", "바디케어"];
+
   const [form, setForm] = useState({
     name: '',
     price: '',
     stock: '',
     description: '',
     isActive: true,
+    category: '',
   });
   const [images, setImages] = useState<ImageInput[]>([]);
 
@@ -33,6 +37,7 @@ export default function AdminProductEditPage() {
     const fetchProduct = async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+        { cache: 'no-store' },
       );
       const product: Product = await res.json();
 
@@ -42,6 +47,7 @@ export default function AdminProductEditPage() {
         stock: String(product.stock),
         description: product.description || '',
         isActive: product.isActive,
+        category: product.category || '',
       });
 
       // 이미지가 있으면 기존 이미지로 채우고, 없으면 빈 입력칸 하나
@@ -66,21 +72,22 @@ export default function AdminProductEditPage() {
 
     const validImages = images.filter((img) => img.url.trim() !== '');
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    try {
+      await api.patch(`/products/${id}`, {
         name: form.name,
         price: Number(form.price),
         stock: Number(form.stock),
         description: form.description,
         isActive: form.isActive,
+        category: form.category || undefined,
         images: validImages,
-      }),
-    });
-
-    setLoading(false);
-    router.push('/admin/projucts');
+      });
+      router.push('/admin/products');
+    } catch (err: any) {
+      alert(err.response?.data?.message ?? '수정에 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const addImage = () =>
@@ -152,6 +159,20 @@ export default function AdminProductEditPage() {
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
+              <select
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-900 bg-white"
+              >
+                <option value="">카테고리 선택</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 상품 설명
               </label>
@@ -184,8 +205,8 @@ export default function AdminProductEditPage() {
                 }`}
               >
                 <span
-                  className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-                    form.isActive ? 'translate-x-5' : 'translate-x-0.5'
+                  className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${
+                    form.isActive ? 'left-[22px]' : 'left-0.5'
                   }`}
                 />
               </button>
