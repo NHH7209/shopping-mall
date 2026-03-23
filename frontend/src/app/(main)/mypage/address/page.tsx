@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import api from '@/lib/api';
 
 interface Address {
-  id: string;
+  id: number;
   label: string;
   recipient: string;
   phone: string;
@@ -11,48 +12,42 @@ interface Address {
   isDefault: boolean;
 }
 
-// TODO: users/address API 연동 후 실제 데이터로 교체
-const MOCK_ADDRESSES: Address[] = [
-  {
-    id: '1',
-    label: '집',
-    recipient: '홍길동',
-    phone: '010-1234-5678',
-    address: '서울시 강남구 테헤란로 123',
-    isDefault: true,
-  },
-];
-
 export default function AddressPage() {
-  const [addresses, setAddresses] = useState<Address[]>(MOCK_ADDRESSES);
+  const [addresses, setAddresses] = useState<Address[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    label: '',
-    recipient: '',
-    phone: '',
-    address: '',
-  });
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({ label: '', recipient: '', phone: '', address: '' });
 
-  const handleAdd = (e: React.FormEvent) => {
+  const fetchAddresses = () => {
+    api.get('/addresses').then(({ data }) => setAddresses(data)).catch(() => {});
+  };
+
+  useEffect(() => { fetchAddresses(); }, []);
+
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newAddress: Address = {
-      id: String(Date.now()),
-      ...form,
-      isDefault: addresses.length === 0,
-    };
-    setAddresses([...addresses, newAddress]);
-    setForm({ label: '', recipient: '', phone: '', address: '' });
-    setShowForm(false);
+    setSubmitting(true);
+    try {
+      await api.post('/addresses', form);
+      setForm({ label: '', recipient: '', phone: '', address: '' });
+      setShowForm(false);
+      fetchAddresses();
+    } catch {
+      alert('배송지 추가에 실패했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    setAddresses((prev) => prev.filter((a) => a.id !== id));
+  const handleSetDefault = async (id: number) => {
+    await api.patch(`/addresses/${id}/default`);
+    fetchAddresses();
   };
 
-  const handleSetDefault = (id: string) => {
-    setAddresses((prev) =>
-      prev.map((a) => ({ ...a, isDefault: a.id === id })),
-    );
+  const handleDelete = async (id: number) => {
+    if (!confirm('배송지를 삭제할까요?')) return;
+    await api.delete(`/addresses/${id}`);
+    fetchAddresses();
   };
 
   return (
@@ -128,9 +123,10 @@ export default function AddressPage() {
             </button>
             <button
               type="submit"
-              className="flex-1 bg-gray-900 text-white py-2 rounded-lg text-sm hover:bg-gray-700"
+              disabled={submitting}
+              className="flex-1 bg-gray-900 text-white py-2 rounded-lg text-sm hover:bg-gray-700 disabled:bg-gray-400"
             >
-              저장
+              {submitting ? '저장 중...' : '저장'}
             </button>
           </div>
         </form>
@@ -142,17 +138,12 @@ export default function AddressPage() {
       ) : (
         <div className="flex flex-col gap-3">
           {addresses.map((addr) => (
-            <div
-              key={addr.id}
-              className="bg-white border border-gray-200 rounded-xl p-5"
-            >
+            <div key={addr.id} className="bg-white border border-gray-200 rounded-xl p-5">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold text-gray-900">{addr.label}</span>
                   {addr.isDefault && (
-                    <span className="text-xs bg-gray-900 text-white px-2 py-0.5 rounded-full">
-                      기본
-                    </span>
+                    <span className="text-xs bg-gray-900 text-white px-2 py-0.5 rounded-full">기본</span>
                   )}
                 </div>
                 <div className="flex gap-2">

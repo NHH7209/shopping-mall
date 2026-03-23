@@ -18,9 +18,13 @@ function LoginForm() {
     setError('');
     setLoading(true);
     try {
-      await login(form.email, form.password);
-      const redirect = searchParams.get('redirect') ?? '/';
-      router.replace(redirect);
+      const user = await login(form.email, form.password);
+      if (user.role === 'admin') {
+        router.replace('/admin');
+      } else {
+        const redirect = searchParams.get('redirect') ?? '/';
+        router.replace(redirect);
+      }
     } catch (err: any) {
       setError(err.response?.data?.message ?? '로그인에 실패했습니다.');
     } finally {

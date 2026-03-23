@@ -7,6 +7,11 @@ import { ProductsModule } from './products/products.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/orders.module';
+import { PaymentsModule } from './payments/payments.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { AddressesModule } from './addresses/addresses.module';
 
 @Module({
   imports: [
@@ -29,6 +34,11 @@ import { AuthModule } from './auth/auth.module';
     CloudinaryModule,
     UsersModule,
     AuthModule,
+    CartModule,
+    OrdersModule,
+    PaymentsModule,
+    ReviewsModule,
+    AddressesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

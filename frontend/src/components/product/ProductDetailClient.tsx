@@ -6,13 +6,39 @@
 // 서버 컴포넌트에서 product 데이터를 받아 렌더링
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Product } from "@/types/product";
+import { useCartStore } from "@/store/cartStore";
+import { useAuthStore } from "@/store/authStore";
 
 export default function ProductDetailClient({ product }: { product: Product }) {
   const initImage = product.images.find((i) => i.isMain) || product.images[0];
 
   const [selectedImg, setSelectedImg] = useState(initImage);
   const [qty, setQty] = useState(1);
+  const [adding, setAdding] = useState(false);
+
+  const router = useRouter();
+  const addItem = useCartStore((s) => s.addItem);
+  const user = useAuthStore((s) => s.user);
+
+  const handleAddToCart = async () => {
+    if (!user) { router.push('/auth/login'); return; }
+    setAdding(true);
+    try {
+      await addItem(product.id, qty);
+      router.push('/cart');
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (!user) { router.push('/auth/login'); return; }
+    // 장바구니에 담지 않고 임시로 저장 후 바로 결제 페이지 이동
+    sessionStorage.setItem('buyNow', JSON.stringify({ product, quantity: qty }));
+    router.push('/checkout?mode=buyNow');
+  };
 
   const sortedImages = [...product.images].sort(
     (a, b) => a.sortOrder - b.sortOrder
@@ -118,10 +144,17 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
         {/* 버튼 */}
         <div className="flex flex-col gap-3">
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-medium transition-colors">
-            장바구니 담기
+          <button
+            onClick={handleAddToCart}
+            disabled={adding}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white py-4 rounded-xl font-medium transition-colors"
+          >
+            {adding ? '담는 중...' : '장바구니 담기'}
           </button>
-          <button className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 py-4 rounded-xl font-medium transition-colors">
+          <button
+            onClick={handleBuyNow}
+            className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 py-4 rounded-xl font-medium transition-colors"
+          >
             바로 구매
           </button>
         </div>

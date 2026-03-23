@@ -1,26 +1,32 @@
-// TODO: orders API 연동 후 params.id로 실제 데이터 조회
-const MOCK_ORDER = {
-  id: 'ORD-001',
-  date: '2025-03-15',
-  status: '배송완료',
-  items: [
-    { name: '상품 예시 A', quantity: 1, price: 35000, imageUrl: '' },
-  ],
-  shippingAddress: '서울시 강남구 테헤란로 123',
-  recipient: '홍길동',
-  phone: '010-1234-5678',
-  totalPrice: 35000,
-  shippingFee: 0,
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import api from '@/lib/api';
+import { Order, ORDER_STATUS_LABEL } from '@/types/order';
+
+const statusColor: Record<string, string> = {
+  pending:   'bg-blue-100 text-blue-700',
+  paid:      'bg-indigo-100 text-indigo-700',
+  shipping:  'bg-yellow-100 text-yellow-700',
+  delivered: 'bg-green-100 text-green-700',
+  cancelled: 'bg-gray-100 text-gray-500',
 };
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
+export default function OrderDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export default async function OrderDetailPage({ params }: Props) {
-  const { id } = await params;
-  // TODO: const order = await fetch(`/orders/${id}`)
-  const order = { ...MOCK_ORDER, id };
+  useEffect(() => {
+    api.get(`/orders/${id}`)
+      .then(({ data }) => setOrder(data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <p className="text-sm text-gray-400">불러오는 중...</p>;
+  if (!order) return <p className="text-sm text-red-400">주문을 찾을 수 없습니다.</p>;
 
   return (
     <div>
@@ -30,11 +36,15 @@ export default async function OrderDetailPage({ params }: Props) {
       <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-gray-400">{order.date}</p>
-            <p className="text-sm font-medium text-gray-900 mt-0.5">주문번호: {order.id}</p>
+            <p className="text-xs text-gray-400">
+              {new Date(order.createdAt).toLocaleString('ko-KR')}
+            </p>
+            <p className="text-sm font-medium text-gray-900 mt-0.5 truncate max-w-[240px]">
+              주문번호: {order.id}
+            </p>
           </div>
-          <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-green-100 text-green-700">
-            {order.status}
+          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusColor[order.status]}`}>
+            {ORDER_STATUS_LABEL[order.status]}
           </span>
         </div>
       </div>
@@ -42,18 +52,26 @@ export default async function OrderDetailPage({ params }: Props) {
       {/* 주문 상품 */}
       <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4">
         <h3 className="text-sm font-semibold text-gray-700 mb-4">주문 상품</h3>
-        {order.items.map((item, i) => (
-          <div key={i} className="flex gap-4">
-            <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0" />
-            <div className="flex-1 flex flex-col justify-center">
-              <p className="text-sm font-medium text-gray-900">{item.name}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{item.quantity}개</p>
+        {order.items.map((item) => {
+          const mainImage = item.product?.images?.find((img) => img.isMain)?.url
+            ?? item.product?.images?.[0]?.url;
+          return (
+            <div key={item.id} className="flex gap-4 py-2 border-b border-gray-100 last:border-b-0">
+              <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
+                {mainImage && (
+                  <img src={mainImage} alt={item.productName} className="w-full h-full object-cover" />
+                )}
+              </div>
+              <div className="flex-1 flex flex-col justify-center">
+                <p className="text-sm font-medium text-gray-900">{item.productName}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{item.quantity}개</p>
+              </div>
+              <p className="text-sm font-bold text-gray-900 self-center">
+                {(item.price * item.quantity).toLocaleString()}원
+              </p>
             </div>
-            <p className="text-sm font-bold text-gray-900 self-center">
-              {(item.price * item.quantity).toLocaleString()}원
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* 배송지 */}
@@ -61,7 +79,10 @@ export default async function OrderDetailPage({ params }: Props) {
         <h3 className="text-sm font-semibold text-gray-700 mb-3">배송지</h3>
         <p className="text-sm text-gray-900 font-medium">{order.recipient}</p>
         <p className="text-sm text-gray-600 mt-0.5">{order.phone}</p>
-        <p className="text-sm text-gray-600 mt-0.5">{order.shippingAddress}</p>
+        <p className="text-sm text-gray-600 mt-0.5">{order.address}</p>
+        {order.memo && (
+          <p className="text-sm text-gray-400 mt-1">메모: {order.memo}</p>
+        )}
       </div>
 
       {/* 결제 금액 */}

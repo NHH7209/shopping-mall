@@ -28,4 +28,12 @@ export class UsersService {
   async updateRefreshToken(id: number, refreshToken: string | null): Promise<void> {
     await this.usersRepository.update(id, { refreshToken });
   }
+
+  // [어드민] 전체 회원 목록
+  async findAll(): Promise<User[]> {
+    return this.usersRepository.find({
+      select: ['id', 'name', 'email', 'role', 'createdAt'],
+      order: { createdAt: 'DESC' },
+    });
+  }
 }

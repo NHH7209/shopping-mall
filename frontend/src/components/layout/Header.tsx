@@ -5,10 +5,12 @@ import Image from "next/image";
 import SearchBar from "./SearchBar";
 import { useAuthStore } from "@/store/authStore";
 import { useAuth } from "@/hooks/useAuth";
+import { useCartStore, selectCartCount } from "@/store/cartStore";
 
 export default function Header() {
   const user = useAuthStore((s) => s.user);
   const { logout } = useAuth();
+  const cartCount = useCartStore(selectCartCount);
 
   return (
     <header className="min-w-[1024px] w-full h-24 bg-white fixed top-0 z-50 flex items-center border-b border-gray-200">
@@ -62,9 +64,11 @@ export default function Header() {
             className="relative text-sm text-gray-500 hover:text-blue-600"
           >
             장바구니
-            <span className="absolute -top-2 -right-2 bg-sky-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-              0
-            </span>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-sky-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
           </Link>
 
           <Link

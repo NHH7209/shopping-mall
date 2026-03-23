@@ -1,9 +1,9 @@
 'use client';
 
-// usePathname: 현재 URL 경로를 읽어오는 Next.js 훅
-// 사이드바에서 현재 페이지 링크를 강조 표시할 때 사용
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useAuthStore } from '@/store/authStore';
 
 const navItems = [
   { href: '/admin', label: '대시보드', icon: '📊' },
@@ -18,6 +18,23 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const user = useAuthStore((s) => s.user);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    // 세션 복원 대기 (AuthInitializer가 /auth/refresh 호출하는 시간)
+    const timer = setTimeout(() => {
+      if (!user || (user as any).role !== 'admin') {
+        router.replace('/');
+      } else {
+        setChecking(false);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [user, router]);
+
+  if (checking) return null;
 
   return (
     <div className="flex">

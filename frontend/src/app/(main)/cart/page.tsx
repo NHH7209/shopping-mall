@@ -1,43 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
-
-// 장바구니 아이템 타입 — cart 모듈 구현 후 실제 API 데이터로 교체
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  imageUrl: string;
-}
-
-// 임시 목업 데이터 — TODO: cart API 연동 후 제거
-const MOCK_ITEMS: CartItem[] = [
-  { id: '1', name: '상품 예시 A', price: 35000, quantity: 1, imageUrl: '' },
-  { id: '2', name: '상품 예시 B', price: 12000, quantity: 2, imageUrl: '' },
-];
+import { useCartStore } from '@/store/cartStore';
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>(MOCK_ITEMS);
+  const { items, fetchCart, updateQuantity, removeItem } = useCartStore();
 
-  const updateQuantity = (id: string, delta: number) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item,
-      ),
-    );
-  };
+  // 페이지 진입 시 최신 장바구니 불러오기
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
 
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  // 총 금액 계산
   const totalPrice = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.product.price * item.quantity,
     0,
   );
   const shippingFee = totalPrice >= 30000 ? 0 : 3000;
@@ -60,51 +36,67 @@ export default function CartPage() {
         <div className="flex gap-8">
           {/* 상품 목록 */}
           <div className="flex-1 flex flex-col gap-4">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex gap-4 bg-white border border-gray-200 rounded-xl p-4"
-              >
-                {/* 상품 이미지 */}
-                <div className="w-24 h-24 bg-gray-100 rounded-lg flex-shrink-0" />
-
-                {/* 상품 정보 */}
-                <div className="flex-1 flex flex-col justify-between">
-                  <div className="flex justify-between">
-                    <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="text-gray-300 hover:text-red-400 text-lg"
-                    >
-                      ✕
-                    </button>
+            {items.map((item) => {
+              const mainImage = item.product.images?.find((img) => img.isMain)?.url
+                ?? item.product.images?.[0]?.url;
+              return (
+                <div
+                  key={item.id}
+                  className="flex gap-4 bg-white border border-gray-200 rounded-xl p-4"
+                >
+                  {/* 상품 이미지 */}
+                  <div className="w-24 h-24 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
+                    {mainImage && (
+                      <img
+                        src={mainImage}
+                        alt={item.product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </div>
-                  <div className="flex items-center justify-between">
-                    {/* 수량 조절 */}
-                    <div className="flex items-center gap-2">
+
+                  {/* 상품 정보 */}
+                  <div className="flex-1 flex flex-col justify-between">
+                    <div className="flex justify-between">
+                      <p className="text-sm font-medium text-gray-900">
+                        {item.product.name}
+                      </p>
                       <button
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="w-7 h-7 border border-gray-300 rounded-full text-sm hover:bg-gray-100"
+                        onClick={() => removeItem(item.id)}
+                        className="text-gray-300 hover:text-red-400 text-lg"
                       >
-                        -
-                      </button>
-                      <span className="text-sm font-medium w-4 text-center">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="w-7 h-7 border border-gray-300 rounded-full text-sm hover:bg-gray-100"
-                      >
-                        +
+                        ✕
                       </button>
                     </div>
-                    <p className="text-sm font-bold text-gray-900">
-                      {(item.price * item.quantity).toLocaleString()}원
-                    </p>
+                    <div className="flex items-center justify-between">
+                      {/* 수량 조절 */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() =>
+                            updateQuantity(item.id, Math.max(1, item.quantity - 1))
+                          }
+                          className="w-7 h-7 border border-gray-300 rounded-full text-sm hover:bg-gray-100"
+                        >
+                          -
+                        </button>
+                        <span className="text-sm font-medium w-4 text-center">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="w-7 h-7 border border-gray-300 rounded-full text-sm hover:bg-gray-100"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <p className="text-sm font-bold text-gray-900">
+                        {(item.product.price * item.quantity).toLocaleString()}원
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* 주문 요약 */}
@@ -118,7 +110,9 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>배송비</span>
-                  <span>{shippingFee === 0 ? '무료' : `${shippingFee.toLocaleString()}원`}</span>
+                  <span>
+                    {shippingFee === 0 ? '무료' : `${shippingFee.toLocaleString()}원`}
+                  </span>
                 </div>
                 <div className="border-t border-gray-100 pt-3 flex justify-between font-bold text-gray-900">
                   <span>총 결제 금액</span>
