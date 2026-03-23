@@ -1,13 +1,16 @@
 import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({ summary: '회원가입' })
   @Post('signup')
   async signup(@Body() dto: SignupDto, @Res({ passthrough: true }) res: any) {
     const { accessToken, refreshToken, user } = await this.authService.signup(dto);
@@ -15,6 +18,7 @@ export class AuthController {
     return { accessToken, user };
   }
 
+  @ApiOperation({ summary: '로그인' })
   @Post('login')
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: any) {
     const { accessToken, refreshToken, user } = await this.authService.login(dto);
@@ -22,6 +26,7 @@ export class AuthController {
     return { accessToken, user };
   }
 
+  @ApiOperation({ summary: '액세스 토큰 갱신 (refresh_token 쿠키 필요)' })
   @Post('refresh')
   async refresh(@Req() req: any, @Res({ passthrough: true }) res: any) {
     const refreshToken = req.cookies?.refresh_token;
@@ -31,6 +36,8 @@ export class AuthController {
     return { accessToken, user };
   }
 
+  @ApiOperation({ summary: '로그아웃' })
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Req() req: any, @Res({ passthrough: true }) res: any) {

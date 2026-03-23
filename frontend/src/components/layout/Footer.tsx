@@ -1,6 +1,6 @@
 const skills = {
   Frontend: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Zustand", "Axios"],
-  Backend: ["NestJS", "TypeORM", "PostgreSQL", "JWT", "Passport", "Bcrypt", "class-validator", "Multer"],
+  Backend: ["NestJS", "TypeORM", "PostgreSQL", "JWT", "Passport", "Bcrypt", "class-validator", "Multer", "Swagger"],
   결제: ["Toss Payments"],
   Infra: ["Vercel", "Railway", "Cloudinary", "Git"],
 };

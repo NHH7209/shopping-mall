@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser = require('cookie-parser');
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -17,6 +18,19 @@ async function bootstrap() {
     origin: ['http://localhost:3000', 'https://blueme.vercel.app'],
     credentials: true, // HttpOnly 쿠키 전달을 위해 필요
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('BlueMe Shopping Mall API')
+    .setDescription('BlueMe 쇼핑몰 REST API 문서')
+    .setVersion('1.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, document);
 
   await app.listen(process.env.PORT ?? 4000);
 }
