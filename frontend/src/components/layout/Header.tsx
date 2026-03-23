@@ -79,8 +79,8 @@ export default function Header() {
           </Link>
 
           <Link
-            href="/customer-service"
-            className="text-sm text-gray-700 hover:text-gray-800"
+            href="/support"
+            className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
           >
             고객센터
           </Link>

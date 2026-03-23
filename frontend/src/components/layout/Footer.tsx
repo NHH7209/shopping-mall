@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const skills = {
   Frontend: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Zustand", "Axios"],
   Backend: ["NestJS", "TypeORM", "PostgreSQL", "JWT", "Passport", "Bcrypt", "class-validator", "Multer"],
@@ -35,15 +33,10 @@ export default function Footer() {
         {/* 하단 링크 + 카피라이트 */}
         <div className="border-t border-gray-100 pt-6 flex items-center justify-between">
           <div className="flex gap-6">
-            <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
-              서비스 이용약관
-            </Link>
-            <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
-              개인정보처리방침
-            </Link>
-            <Link href="/" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
-              공지사항
-            </Link>
+            <span className="text-xs text-gray-400">서비스 이용약관</span>
+            <span className="text-xs text-gray-400">개인정보처리방침</span>
+            <span className="text-xs text-gray-400">공지사항</span>
+            <span className="text-xs text-gray-400">고객센터</span>
           </div>
           <p className="text-xs text-gray-400">© 2026 ShoppingMall. Portfolio Project.</p>
         </div>

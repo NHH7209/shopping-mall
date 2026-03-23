@@ -27,8 +27,8 @@ export default function NavigationMenu() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="w-full h-14 border-b border-gray-200 bg-white fixed top-24 z-40 flex items-center">
-      <div className="w-full max-w-[1200px] mx-auto px-8 flex items-center h-11">
+    <nav className="w-full h-14 border-b border-gray-200 bg-white fixed top-24 z-50 flex items-center">
+      <div className="w-full max-w-[1200px] mx-auto px-8 flex items-center h-full">
         {/* 카테고리 드롭다운 */}
         <div
           className="relative pr-12"

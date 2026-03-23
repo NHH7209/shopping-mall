@@ -32,7 +32,8 @@ const seedData = [
     stock: 50,
     salesCount: 120,
     viewCount: 540,
-    imageUrl: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=800&q=80',
+    category: '스킨케어',
+    imageUrl: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800&q=80',
   },
   {
     name: '비타민C 세럼',
@@ -41,16 +42,18 @@ const seedData = [
     stock: 30,
     salesCount: 95,
     viewCount: 420,
-    imageUrl: 'https://images.unsplash.com/photo-1526758097130-bab247274f58?w=800&q=80',
+    category: '에센스/세럼',
+    imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80',
   },
   {
-    name: '젠틀 클렌징 폼',
-    description: '약산성 세안제. 자극 없이 피지와 노폐물을 깨끗하게 세정합니다.',
-    price: 18000,
-    stock: 80,
-    salesCount: 200,
-    viewCount: 780,
-    imageUrl: 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=800&q=80',
+    name: '저자극 클렌징 워터',
+    description: '닦아내는 타입의 무향 클렌징 워터. 예민한 피부도 부담 없이 사용 가능합니다.',
+    price: 21000,
+    stock: 55,
+    salesCount: 110,
+    viewCount: 410,
+    category: '클렌징',
+    imageUrl: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=800&q=80',
   },
   {
     name: 'SPF50+ 선크림',
@@ -59,7 +62,8 @@ const seedData = [
     stock: 60,
     salesCount: 180,
     viewCount: 650,
-    imageUrl: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&q=80',
+    category: '선케어',
+    imageUrl: 'https://images.unsplash.com/photo-1631730486572-226d1f595b68?w=800&q=80',
   },
   {
     name: '레티놀 아이크림',
@@ -68,7 +72,8 @@ const seedData = [
     stock: 25,
     salesCount: 70,
     viewCount: 320,
-    imageUrl: 'https://images.unsplash.com/photo-1515688594390-b649af70d282?w=800&q=80',
+    category: '스킨케어',
+    imageUrl: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=800&q=80',
   },
   {
     name: '콜라겐 마스크팩 (5매)',
@@ -77,16 +82,8 @@ const seedData = [
     stock: 100,
     salesCount: 250,
     viewCount: 920,
+    category: '마스크팩',
     imageUrl: 'https://images.unsplash.com/photo-1597931752949-98c74b5b159f?w=800&q=80',
-  },
-  {
-    name: '토닝 토너',
-    description: '피부결을 정돈하고 다음 단계 흡수를 도와주는 토너.',
-    price: 24000,
-    stock: 45,
-    salesCount: 130,
-    viewCount: 480,
-    imageUrl: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=800&q=80',
   },
   {
     name: '나이아신아마이드 에센스',
@@ -95,6 +92,7 @@ const seedData = [
     stock: 35,
     salesCount: 88,
     viewCount: 390,
+    category: '에센스/세럼',
     imageUrl: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=800&q=80',
   },
   {
@@ -104,6 +102,7 @@ const seedData = [
     stock: 55,
     salesCount: 160,
     viewCount: 570,
+    category: '메이크업',
     imageUrl: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80',
   },
   {
@@ -113,7 +112,78 @@ const seedData = [
     stock: 40,
     salesCount: 105,
     viewCount: 430,
+    category: '마스크팩',
     imageUrl: 'https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=800&q=80',
+  },
+  {
+    name: '펩타이드 넥 크림',
+    description: '목과 데콜테 피부를 집중 케어하는 탄력 강화 크림.',
+    price: 52000,
+    stock: 20,
+    salesCount: 45,
+    viewCount: 210,
+    category: '스킨케어',
+    imageUrl: 'https://images.unsplash.com/photo-1585751119414-ef2636f8aede?w=800&q=80',
+  },
+  {
+    name: '글로우 하이라이터',
+    description: '피부에 자연스러운 광채를 더해주는 파우더 하이라이터.',
+    price: 29000,
+    stock: 50,
+    salesCount: 90,
+    viewCount: 380,
+    category: '메이크업',
+    imageUrl: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800&q=80',
+  },
+  {
+    name: '딥 모이스처 바디로션',
+    description: '쉐어버터와 아르간 오일이 함유된 고보습 바디로션.',
+    price: 23000,
+    stock: 65,
+    salesCount: 140,
+    viewCount: 500,
+    category: '바디케어',
+    imageUrl: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=800&q=80',
+  },
+  {
+    name: '클리어 포어 세럼',
+    description: '살리실산과 티트리 성분으로 트러블을 진정시키는 세럼.',
+    price: 36000,
+    stock: 30,
+    salesCount: 80,
+    viewCount: 350,
+    category: '에센스/세럼',
+    imageUrl: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80',
+  },
+  {
+    name: '스칼프 케어 샴푸',
+    description: '두피 유수분 밸런스를 맞춰주는 약산성 두피 케어 샴푸.',
+    price: 26000,
+    stock: 45,
+    salesCount: 115,
+    viewCount: 460,
+    category: '헤어케어',
+    imageUrl: 'https://images.unsplash.com/photo-1585751119414-ef2636f8aede?w=800&q=80',
+  },
+  {
+    name: '세라마이드 배리어 크림',
+    description: '피부 장벽을 강화하는 세라마이드 복합체 함유 진정 크림.',
+    price: 44000,
+    stock: 35,
+    salesCount: 60,
+    viewCount: 280,
+    category: '스킨케어',
+    imageUrl: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800&q=80',
+  },
+  {
+    name: '네추럴 립스틱',
+    description: '발색력이 뛰어나고 촉촉한 마무리감을 주는 비건 립스틱.',
+    price: 17000,
+    stock: 75,
+    salesCount: 220,
+    viewCount: 840,
+    category: '메이크업',
+    imageUrl: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80',
   },
 ];
 
@@ -139,6 +209,7 @@ async function seed() {
       stock: data.stock,
       salesCount: data.salesCount,
       viewCount: data.viewCount,
+      category: data.category,
       isActive: true,
     });
     const savedProduct = await productRepo.save(product);
@@ -155,7 +226,7 @@ async function seed() {
     console.log(`✅ 상품 등록: ${data.name}`);
   }
 
-  console.log('\n🎉 Seed 완료! 총 10개 상품이 등록됐습니다.');
+  console.log('\n🎉 Seed 완료! 총 16개 상품이 등록됐습니다.');
   await dataSource.destroy(); // DB 연결 종료
 }
 
