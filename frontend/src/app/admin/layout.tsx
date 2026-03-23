@@ -4,12 +4,13 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/authStore';
+import { useAuth } from '@/hooks/useAuth';
 
 const navItems = [
-  { href: '/admin', label: '대시보드', icon: '📊' },
-  { href: '/admin/products', label: '상품 관리', icon: '📦' },
-  { href: '/admin/orders', label: '주문 관리', icon: '📋' },
-  { href: '/admin/users', label: '회원 관리', icon: '👥' },
+  { href: '/admin', label: '대시보드' },
+  { href: '/admin/products', label: '상품 관리' },
+  { href: '/admin/orders', label: '주문 관리' },
+  { href: '/admin/users', label: '회원 관리' },
 ];
 
 export default function AdminLayout({
@@ -20,6 +21,7 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
+  const { logout } = useAuth();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -57,18 +59,25 @@ export default function AdminLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
                 }`}
               >
-                <span>{item.icon}</span>
                 {item.label}
               </Link>
             );
           })}
         </nav>
+        <div className="px-3 py-4 mt-auto">
+          <button
+            onClick={logout}
+            className="w-full px-3 py-2.5 rounded-lg text-sm font-bold text-red-400 border-2 border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors"
+          >
+            로그아웃
+          </button>
+        </div>
       </aside>
 
       {/* 메인 콘텐츠 — 사이드바 너비(w-56)만큼 왼쪽 여백, 상단 여백도 추가 */}

@@ -18,7 +18,7 @@ export class OrderItem {
   order: Order;
 
   // 상품 참조 (삭제돼도 주문 기록은 남도록 nullable)
-  @ManyToOne(() => Product, { nullable: true, onDelete: 'SET NULL', eager: true })
+  @ManyToOne(() => Product, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn()
   product: Product | null;
 
