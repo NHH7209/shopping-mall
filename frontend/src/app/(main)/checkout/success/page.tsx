@@ -5,16 +5,20 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import api from '@/lib/api';
 import { useCartStore } from '@/store/cartStore';
+import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const clearCart = useCartStore((s) => s.clearCart);
+  const accessToken = useAuthStore((s) => s.accessToken);
   const [status, setStatus] = useState<'loading' | 'done' | 'error'>('loading');
   const called = useRef(false);
 
   useEffect(() => {
+    // accessToken이 복구될 때까지 대기
+    if (!accessToken) return;
     if (called.current) return;
     called.current = true;
 
@@ -29,7 +33,7 @@ function SuccessContent() {
         setStatus('done');
       })
       .catch(() => setStatus('error'));
-  }, [searchParams, clearCart]);
+  }, [accessToken, searchParams, clearCart]);
 
   if (status === 'loading') {
     return (
