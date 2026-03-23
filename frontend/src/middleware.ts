@@ -6,7 +6,7 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isProtected = PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 
-  if (isProtected && !req.cookies.get('refresh_token')) {
+  if (isProtected && !req.cookies.get('is_authenticated')) {
     const loginUrl = new URL('/auth/login', req.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
