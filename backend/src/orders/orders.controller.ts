@@ -29,6 +29,12 @@ export class OrdersController {
     return this.ordersService.findOne(userId, orderId);
   }
 
+  // PATCH /orders/:id/cancel → 주문 취소
+  @Patch(':id/cancel')
+  cancelOrder(@GetUser('id') userId: number, @Param('id') orderId: string) {
+    return this.ordersService.cancelOrder(userId, orderId);
+  }
+
   // [어드민] GET /orders/admin/all → 전체 주문 목록
   @Get('admin/all')
   @UseGuards(RolesGuard)

@@ -5,6 +5,7 @@ import { Order, OrderStatus } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { CartService } from '../cart/cart.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class OrdersService {
@@ -13,6 +14,8 @@ export class OrdersService {
     private orderRepository: Repository<Order>,
     @InjectRepository(OrderItem)
     private orderItemRepository: Repository<OrderItem>,
+    @InjectRepository(Product)
+    private productRepository: Repository<Product>,
     private cartService: CartService,
   ) {}
 
@@ -29,6 +32,13 @@ export class OrdersService {
     if (inactiveItems.length > 0) {
       const names = inactiveItems.map((item) => item.product.name).join(', ');
       throw new BadRequestException(`현재 판매 중단된 상품이 있습니다: ${names}`);
+    }
+
+    // 재고 부족 체크
+    const outOfStockItems = cart.items.filter((item) => item.product.stock < item.quantity);
+    if (outOfStockItems.length > 0) {
+      const names = outOfStockItems.map((item) => `${item.product.name} (재고: ${item.product.stock}개)`).join(', ');
+      throw new BadRequestException(`재고가 부족한 상품이 있습니다: ${names}`);
     }
 
     // 총 금액 계산
@@ -62,6 +72,12 @@ export class OrdersService {
     );
     await this.orderItemRepository.save(orderItems);
 
+    // 재고 차감 + 판매수 증가
+    for (const item of cart.items) {
+      await this.productRepository.decrement({ id: item.product.id }, 'stock', item.quantity);
+      await this.productRepository.increment({ id: item.product.id }, 'salesCount', item.quantity);
+    }
+
     // 장바구니 비우기
     for (const item of cart.items) {
       await this.cartService.removeItem(userId, item.id);
@@ -87,6 +103,30 @@ export class OrdersService {
     });
     if (!order) throw new NotFoundException('주문을 찾을 수 없습니다.');
     return order;
+  }
+
+  // 주문 취소 (pending, paid 상태만 가능)
+  async cancelOrder(userId: number, orderId: string): Promise<Order> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId, user: { id: userId } },
+    });
+    if (!order) throw new NotFoundException('주문을 찾을 수 없습니다.');
+    if (!['pending', 'paid'].includes(order.status)) {
+      throw new BadRequestException('배송 중이거나 완료된 주문은 취소할 수 없습니다.');
+    }
+    order.status = OrderStatus.CANCELLED;
+    await this.orderRepository.save(order);
+
+    // 재고 복구
+    const fullOrder = await this.findOne(userId, orderId);
+    for (const item of fullOrder.items) {
+      if (item.product) {
+        await this.productRepository.increment({ id: item.product.id }, 'stock', item.quantity);
+        await this.productRepository.decrement({ id: item.product.id }, 'salesCount', item.quantity);
+      }
+    }
+
+    return fullOrder;
   }
 
   // [어드민] 전체 주문 목록

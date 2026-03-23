@@ -27,6 +27,7 @@ function CheckoutContent() {
   const user = useAuthStore((s) => s.user);
   const [buyNowItem, setBuyNowItem] = useState<CartItem | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // 저장된 배송지
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -86,6 +87,7 @@ function CheckoutContent() {
     if (!delivery.recipient || !delivery.phone || !delivery.address) return;
 
     setSubmitting(true);
+    setErrorMsg(null);
     try {
       // 바로 구매 모드면 임시로 장바구니에 담았다가 주문 후 제거
       if (isBuyNow && buyNowItem) {
@@ -112,8 +114,15 @@ function CheckoutContent() {
         failUrl: `${window.location.origin}/checkout/fail`,
       });
     } catch (err: any) {
+      // 주문 생성 실패 (재고 부족, 비활성 상품 등) → 페이지에 에러 메시지 표시
+      if (err?.response?.data?.message) {
+        setErrorMsg(err.response.data.message);
+        setSubmitting(false);
+        return;
+      }
+      // Toss 결제 실패 → fail 페이지로 이동
       if (err?.code !== 'USER_CANCEL') {
-        const message = err?.message ?? err?.response?.data?.message ?? '오류가 발생했습니다. 다시 시도해주세요.';
+        const message = err?.message ?? '오류가 발생했습니다. 다시 시도해주세요.';
         router.push(`/checkout/fail?message=${encodeURIComponent(message)}`);
         return;
       }
@@ -266,6 +275,9 @@ function CheckoutContent() {
                 <span>{finalAmount.toLocaleString()}원</span>
               </div>
             </div>
+            {errorMsg && (
+              <p className="text-xs text-red-500 text-center mb-3">{errorMsg}</p>
+            )}
             <button
               type="submit"
               disabled={submitting}

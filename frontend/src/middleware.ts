@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PROTECTED_ROUTES = ['/mypage', '/cart', '/checkout'];
+const PROTECTED_ROUTES = ['/mypage', '/cart', '/checkout', '/order'];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -24,5 +24,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/mypage/:path*', '/cart', '/checkout/:path*', '/', '/products/:path*', '/products', '/auth/:path*'],
+  matcher: ['/mypage/:path*', '/cart', '/checkout/:path*', '/order/:path*', '/order', '/', '/products/:path*', '/products', '/auth/:path*'],
 };

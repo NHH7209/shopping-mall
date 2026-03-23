@@ -73,8 +73,11 @@
 | 토큰 자동 갱신 | Access Token 만료 시 Axios Interceptor가 자동으로 갱신 후 원래 요청 재시도 |
 | 상품 탐색 | 카테고리 필터, 키워드 검색, 실시간 랭킹(판매순), 트렌딩(조회순) |
 | 장바구니 | 상품 추가/수량 변경/삭제, 로그인 시 서버 장바구니 동기화 |
-| 결제 | Toss Payments 카드 결제, 30,000원 이상 무료배송 |
+| 결제 | Toss Payments 카드 결제, 30,000원 이상 무료배송, 재고 부족 시 인라인 에러 표시 |
 | 바로 구매 | 장바구니 없이 상품 상세에서 즉시 결제 |
+| 주문·배송 조회 | 주문 목록과 배송 단계(주문완료 → 결제완료 → 배송중 → 배송완료) 시각화 |
+| 주문 취소 | 주문완료/결제완료 상태에서 취소 가능, 취소 시 재고 자동 복구 |
+| 재주문 | 기존 주문 상품을 장바구니에 담아 바로 결제 페이지로 이동 |
 | 마이페이지 | 주문 내역 조회, 프로필 수정, 배송지 관리 |
 | 리뷰 | 구매 확인 후 리뷰 작성 가능 (구매하지 않은 상품은 작성 불가) |
 
@@ -85,6 +88,13 @@
 | 상품 관리 | 상품 등록/수정/삭제, 이미지 다중 업로드 (Cloudinary CDN) |
 | 주문 관리 | 전체 주문 조회, 주문 상태 변경 (pending → paid → shipping → delivered) |
 | 회원 관리 | 전체 회원 목록 조회 |
+
+### 기타
+| 기능 | 설명 |
+|------|------|
+| 404 페이지 | 존재하지 않는 경로 접근 시 안내 페이지 표시 |
+| 준비 중 페이지 | 미구현 서비스(특가/세일, 기획전, 브랜드, 이벤트, 고객센터) 안내 |
+| 로딩 스켈레톤 | 상품 목록 등 데이터 로딩 중 스켈레톤 UI 표시 |
 
 <br/>
 
@@ -420,6 +430,82 @@ api.interceptors.response.use(null, async (error) => {
     }
   }
 });
+```
+
+---
+
+### 5. 주문 생성 시 재고 차감 누락
+
+**문제**
+
+주문이 생성되어도 상품 재고(stock)가 차감되지 않아 재고 이상으로 주문이 가능했습니다. 또한 주문 취소 시에도 재고가 복구되지 않았습니다.
+
+**해결**
+
+주문 생성 시 재고 부족 여부를 먼저 검증한 뒤, 주문 확정 시 재고를 차감하고 판매수를 증가시킵니다. 주문 취소 시에는 반대로 재고를 복구하고 판매수를 감소시킵니다.
+
+```typescript
+// 재고 부족 검증
+const outOfStockItems = cart.items.filter((item) => item.product.stock < item.quantity);
+if (outOfStockItems.length > 0) throw new BadRequestException('재고가 부족한 상품이 있습니다.');
+
+// 주문 확정 시 재고 차감
+await this.productRepository.decrement({ id: item.product.id }, 'stock', item.quantity);
+await this.productRepository.increment({ id: item.product.id }, 'salesCount', item.quantity);
+
+// 주문 취소 시 재고 복구
+await this.productRepository.increment({ id: item.product.id }, 'stock', item.quantity);
+await this.productRepository.decrement({ id: item.product.id }, 'salesCount', item.quantity);
+```
+
+---
+
+### 7. TypeORM eager 로딩과 명시적 relations 충돌로 이미지 미조회
+
+**문제**
+
+주문 상세 페이지에서 상품 이미지가 표시되지 않았습니다. `OrderItem` 엔티티의 `product` 관계에 `eager: true`가 설정되어 있어 TypeORM이 product를 자동으로 로드하지만, 이 경우 nested relation인 `product.images`는 포함되지 않습니다. Service에서 `relations: ['items.product.images']`를 명시해도 eager 로딩과 충돌하여 images가 조회되지 않았습니다.
+
+**해결**
+
+`OrderItem` 엔티티에서 `eager: true`를 제거했습니다. Service에서 이미 명시적으로 relations를 지정하고 있으므로 eager 설정이 불필요했고, 제거 후 `items.product.images`가 정상적으로 조회됩니다.
+
+```typescript
+// 수정 전
+@ManyToOne(() => Product, { nullable: true, onDelete: 'SET NULL', eager: true })
+product: Product | null;
+
+// 수정 후
+@ManyToOne(() => Product, { nullable: true, onDelete: 'SET NULL' })
+product: Product | null;
+```
+
+---
+
+### 8. Toss Payments customerKey 오용으로 결제 오류 발생
+
+**문제**
+
+`customerKey`에 사용자 ID 대신 주문 ID(`user_${order.id}`)를 사용했습니다. Toss SDK 스펙상 `customerKey`는 결제 수단을 저장·관리하는 고객 식별자이므로, 주문마다 다른 값이 들어오면 SDK 내부에서 오류가 발생했습니다. 또한 에러 발생 시 SDK 오버레이만 뜨고 닫기 버튼이 없어 사용자가 페이지를 벗어날 수 없었습니다.
+
+**해결**
+
+`customerKey`를 로그인한 사용자의 ID 기반으로 고정하고, 결제 실패 시 `alert()` 대신 fail 페이지로 redirect하도록 수정했습니다.
+
+```typescript
+// 수정 전
+const payment = toss.payment({ customerKey: `user_${order.id}` });
+
+// 수정 후
+const payment = toss.payment({ customerKey: `user_${user?.id}` });
+
+// 에러 처리: alert → fail 페이지 redirect
+} catch (err: any) {
+  if (err?.code !== 'USER_CANCEL') {
+    const message = err?.message ?? '오류가 발생했습니다.';
+    router.push(`/checkout/fail?message=${encodeURIComponent(message)}`);
+  }
+}
 ```
 
 <br/>

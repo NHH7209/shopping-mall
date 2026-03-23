@@ -5,10 +5,11 @@ import { OrdersService } from './orders.service';
 import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { CartModule } from '../cart/cart.module';
+import { Product } from '../products/entities/product.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order, OrderItem]),
+    TypeOrmModule.forFeature([Order, OrderItem, Product]),
     CartModule, // CartService 사용을 위해 import
   ],
   controllers: [OrdersController],
