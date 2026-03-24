@@ -1,3 +1,8 @@
+/**
+ * page.tsx (주문·배송 조회)
+ * 로그인 사용자의 주문 목록을 보여주는 페이지. 각 주문의 배송 상태를 스텝 UI로 시각화하고
+ * 클릭 시 상세 페이지(mypage/orders/[id])로 이동한다.
+ */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -75,8 +80,7 @@ export default function OrderPage() {
                   <div className="flex gap-3">
                     {/* 대표 상품 이미지 */}
                     {(() => {
-                      const mainImage = order.items[0]?.product?.images?.find((img) => img.isMain)?.url
-                        ?? order.items[0]?.product?.images?.[0]?.url;
+                      const mainImage = order.items[0]?.product?.images?.[0]?.url;
                       return (
                         <div className="w-14 h-14 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
                           {mainImage && (

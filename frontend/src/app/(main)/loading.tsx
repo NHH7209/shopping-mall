@@ -1,3 +1,7 @@
+/**
+ * loading.tsx (메인)
+ * 메인 페이지 로딩 스켈레톤 UI. Next.js의 스트리밍 기능으로 데이터 로딩 중 표시된다.
+ */
 export default function MainLoading() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 animate-pulse">

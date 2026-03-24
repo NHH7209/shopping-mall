@@ -1,3 +1,8 @@
+/**
+ * page.tsx (주문 내역)
+ * 내 주문 목록 페이지. 주문 상태, 주문번호, 상품명, 총 금액을 표시하며
+ * 각 주문 클릭 시 상세 페이지로 이동한다.
+ */
 'use client';
 
 import { useEffect, useState } from 'react';

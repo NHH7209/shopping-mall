@@ -1,11 +1,13 @@
+/**
+ * update-product.dto.ts
+ * 상품 수정 요청 DTO. 모든 필드가 선택적이며, 전달된 필드만 부분 업데이트된다.
+ * 이미지 배열이 포함되면 기존 이미지를 전부 교체한다.
+ */
 import { IsBoolean, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class UpdateProductImageDto {
   @IsString()
   url: string;
-
-  @IsBoolean()
-  isMain: boolean;
 
   @IsNumber()
   sortOrder: number;

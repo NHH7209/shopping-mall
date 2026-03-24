@@ -1,3 +1,7 @@
+/**
+ * not-found.tsx
+ * 404 에러 페이지. 존재하지 않는 URL 접근 시 표시되며 홈으로 돌아가는 링크를 제공한다.
+ */
 import Link from 'next/link';
 
 export default function NotFound() {

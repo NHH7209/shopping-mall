@@ -1,3 +1,8 @@
+/**
+ * page.tsx (회원가입)
+ * 회원가입 폼 페이지. 이름, 이메일, 비밀번호(확인 포함)를 입력받아
+ * useAuth 훅으로 가입 후 홈으로 이동한다.
+ */
 'use client';
 
 import { useState } from 'react';

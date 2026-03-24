@@ -1,3 +1,8 @@
+/**
+ * address.entity.ts
+ * 배송지 엔티티. 라벨(집/회사 등), 수령인, 연락처, 주소, 기본 배송지 여부를 저장한다.
+ * 사용자 삭제 시 CASCADE로 함께 삭제된다.
+ */
 import {
   Entity,
   PrimaryGeneratedColumn,

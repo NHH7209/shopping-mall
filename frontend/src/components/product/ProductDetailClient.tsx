@@ -1,3 +1,8 @@
+/**
+ * ProductDetailClient.tsx (상품 상세 클라이언트 컴포넌트)
+ * 상품 상세 페이지의 인터랙티브 영역. 이미지 갤러리, 수량 선택, 장바구니 담기,
+ * 바로 구매 기능을 제공하며 서버 컴포넌트(ProductDetailPage)로부터 product 데이터를 받아 렌더링한다.
+ */
 "use client";
 
 // 상품 상세 페이지의 인터랙티브 부분
@@ -12,9 +17,9 @@ import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 
 export default function ProductDetailClient({ product }: { product: Product }) {
-  const initImage = product.images.find((i) => i.isMain) || product.images[0];
+  const sortedImages = [...product.images].sort((a, b) => a.sortOrder - b.sortOrder);
 
-  const [selectedImg, setSelectedImg] = useState(initImage);
+  const [selectedImg, setSelectedImg] = useState(sortedImages[0]);
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -41,9 +46,6 @@ export default function ProductDetailClient({ product }: { product: Product }) {
     router.push('/checkout?mode=buyNow');
   };
 
-  const sortedImages = [...product.images].sort(
-    (a, b) => a.sortOrder - b.sortOrder
-  );
 
   return (
     <>

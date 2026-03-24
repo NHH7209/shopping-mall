@@ -1,3 +1,9 @@
+/**
+ * auth.controller.ts
+ * 인증 컨트롤러. 회원가입(POST /auth/signup), 로그인(POST /auth/login),
+ * 토큰 갱신(POST /auth/refresh), 로그아웃(POST /auth/logout) 엔드포인트를 처리한다.
+ * Refresh Token은 HttpOnly 쿠키로 설정해 XSS 공격을 방지한다.
+ */
 import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';

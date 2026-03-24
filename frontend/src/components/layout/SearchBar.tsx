@@ -1,3 +1,8 @@
+/**
+ * SearchBar.tsx
+ * 헤더 검색바 컴포넌트. 입력값으로 /products?q=검색어 URL을 생성해
+ * 상품 목록 페이지로 이동한다. Enter 키와 검색 버튼 모두 지원한다.
+ */
 "use client";
 
 // 검색바 — useRouter가 필요해서 클라이언트 컴포넌트로 분리

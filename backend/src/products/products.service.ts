@@ -1,3 +1,8 @@
+/**
+ * products.service.ts
+ * 상품 비즈니스 로직. 검색·카테고리 필터, 조회수(viewCount) 자동 증가,
+ * 판매량(salesCount) 기반 랭킹, 상품/이미지 CRUD를 담당한다.
+ */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
@@ -101,7 +106,6 @@ export class ProductsService {
       const images = dto.images.map((img) =>
         this.productImageRepository.create({
           url: img.url,
-          isMain: img.isMain,
           sortOrder: img.sortOrder,
           product: savedProduct,
         }),
@@ -135,7 +139,6 @@ export class ProductsService {
         const images = dto.images.map((img) =>
           this.productImageRepository.create({
             url: img.url,
-            isMain: img.isMain,
             sortOrder: img.sortOrder,
             product: { id } as Product, // id만 있는 부분 참조로 FK 연결
           }),

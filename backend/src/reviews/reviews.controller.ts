@@ -1,3 +1,8 @@
+/**
+ * reviews.controller.ts
+ * 리뷰 컨트롤러. 상품별 리뷰 목록 조회(GET /reviews?productId=),
+ * 리뷰 작성(POST /reviews), 본인 리뷰 삭제(DELETE /reviews/:id) 엔드포인트를 처리한다.
+ */
 import { Controller, Get, Post, Delete, Body, Param, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { ReviewsService } from './reviews.service';

@@ -1,3 +1,8 @@
+/**
+ * layout.tsx (루트)
+ * 전체 앱의 최상위 레이아웃. html/body 기본 뼈대와 메타데이터를 설정하고
+ * AuthInitializer로 앱 시작 시 인증 상태를 복원한다.
+ */
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthInitializer from "@/components/AuthInitializer";

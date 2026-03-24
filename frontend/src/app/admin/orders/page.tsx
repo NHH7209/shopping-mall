@@ -1,3 +1,8 @@
+/**
+ * page.tsx (관리자 주문 목록)
+ * 관리자 주문 관리 페이지. 전체 주문을 테이블로 표시하며
+ * 드롭다운으로 주문 상태를 직접 변경할 수 있다.
+ */
 'use client';
 
 import { useEffect, useState } from 'react';

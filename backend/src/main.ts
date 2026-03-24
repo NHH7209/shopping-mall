@@ -1,3 +1,8 @@
+/**
+ * main.ts
+ * 애플리케이션 진입점. NestJS 앱을 생성하고 CORS, ValidationPipe,
+ * Swagger API 문서, 쿠키 파서 등 전역 설정을 적용한 뒤 서버를 시작한다.
+ */
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser = require('cookie-parser');

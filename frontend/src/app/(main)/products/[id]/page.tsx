@@ -1,3 +1,8 @@
+/**
+ * page.tsx (상품 상세)
+ * 상품 상세 페이지. 서버에서 상품 데이터를 fetch하고(viewCount +1),
+ * 이미지·장바구니 담기는 클라이언트 컴포넌트(ProductDetailClient)로 분리된다.
+ */
 import { Product } from "@/types/product";
 import ProductDetailClient from "@/components/product/ProductDetailClient";
 import ReviewSection from "@/components/product/ReviewSection";

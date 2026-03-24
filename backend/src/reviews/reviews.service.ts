@@ -1,3 +1,8 @@
+/**
+ * reviews.service.ts
+ * 리뷰 비즈니스 로직. 상품 리뷰 조회, 구매 여부 확인(Order 조회) 후 리뷰 작성,
+ * 중복 리뷰 방지, 본인 리뷰 삭제를 담당한다.
+ */
 import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

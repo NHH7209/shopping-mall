@@ -1,3 +1,8 @@
+/**
+ * layout.tsx (관리자)
+ * 관리자 페이지 레이아웃. ADMIN 역할 확인 후 사이드바 네비게이션(대시보드, 상품·주문·회원 관리)과
+ * 콘텐츠 영역으로 구성된다. 비관리자 접근 시 홈으로 리다이렉트한다.
+ */
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';

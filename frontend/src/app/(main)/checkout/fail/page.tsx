@@ -1,3 +1,7 @@
+/**
+ * page.tsx (결제 실패)
+ * Toss 결제 실패 시 리다이렉트되는 페이지. URL의 message 파라미터로 실패 사유를 표시한다.
+ */
 'use client';
 
 import { useSearchParams } from 'next/navigation';

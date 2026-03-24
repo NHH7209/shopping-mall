@@ -1,3 +1,8 @@
+/**
+ * cart-item.entity.ts
+ * 장바구니 아이템 엔티티. 어떤 장바구니(Cart)에 어떤 상품(Product)이
+ * 몇 개(quantity) 담겼는지를 저장한다.
+ */
 import {
   Entity,
   PrimaryGeneratedColumn,

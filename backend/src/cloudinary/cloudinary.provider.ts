@@ -1,3 +1,8 @@
+/**
+ * cloudinary.provider.ts
+ * Cloudinary 커스텀 프로바이더. 환경변수에서 API 키를 읽어 Cloudinary SDK를 초기화하고
+ * 'CLOUDINARY' 토큰으로 NestJS DI 컨테이너에 등록한다.
+ */
 import { v2 as cloudinary } from 'cloudinary';
 import { ConfigService } from '@nestjs/config';
 

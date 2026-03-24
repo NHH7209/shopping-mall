@@ -214,10 +214,9 @@ async function seed() {
     });
     const savedProduct = await productRepo.save(product);
 
-    // 2. 이미지 저장 — 첫 번째(유일한) 이미지를 대표 이미지로 설정
+    // 2. 이미지 저장 — sortOrder: 0이 대표 이미지
     const image = imageRepo.create({
       url: data.imageUrl,
-      isMain: true,
       sortOrder: 0,
       product: savedProduct,
     });

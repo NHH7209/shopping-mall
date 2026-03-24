@@ -1,11 +1,12 @@
-import { IsBoolean, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+/**
+ * create-product.dto.ts
+ * 상품 생성 요청 DTO. 상품 기본 정보와 이미지 배열의 유효성을 검증한다.
+ */
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateProductImageDto {
   @IsString()
   url: string;
-
-  @IsBoolean()
-  isMain: boolean;
 
   @IsNumber()
   sortOrder: number;

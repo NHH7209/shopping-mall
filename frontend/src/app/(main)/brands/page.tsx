@@ -1,3 +1,7 @@
+/**
+ * page.tsx (브랜드)
+ * 브랜드 페이지. 현재 준비 중인 기능으로 안내 문구를 표시한다.
+ */
 export default function BrandsPage() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">

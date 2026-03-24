@@ -1,3 +1,8 @@
+/**
+ * products.controller.ts
+ * 상품 컨트롤러. 고객용 상품 목록/상세/랭킹/트렌딩 조회와
+ * 관리자용 상품 생성·수정·삭제, 이미지 업로드 엔드포인트를 처리한다.
+ */
 import {
   Controller,
   Get,

@@ -1,3 +1,8 @@
+/**
+ * cart.controller.ts
+ * 장바구니 컨트롤러. 장바구니 조회, 상품 추가, 수량 변경, 아이템 삭제
+ * 엔드포인트를 처리한다. JWT 인증이 필수이다.
+ */
 import {
   Controller,
   Get,

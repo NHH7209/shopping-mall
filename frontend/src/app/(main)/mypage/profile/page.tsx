@@ -1,3 +1,8 @@
+/**
+ * page.tsx (프로필 수정)
+ * 이름 변경 및 비밀번호 변경 폼을 제공하는 마이페이지 탭이다.
+ * 변경된 항목만 서버에 전송한다.
+ */
 'use client';
 
 import { useState } from 'react';

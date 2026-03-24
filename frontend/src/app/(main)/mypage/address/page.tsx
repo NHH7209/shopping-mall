@@ -1,3 +1,7 @@
+/**
+ * page.tsx (배송지 관리)
+ * 배송지 목록 조회, 추가 폼, 기본 배송지 설정, 삭제 기능을 제공하는 마이페이지 탭이다.
+ */
 'use client';
 
 import { useEffect, useState } from 'react';

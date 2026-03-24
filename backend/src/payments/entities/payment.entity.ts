@@ -1,3 +1,8 @@
+/**
+ * payment.entity.ts
+ * 결제 엔티티. Toss가 발급한 paymentKey, 결제 금액, 상태를 저장하며
+ * Order와 1:1 관계를 갖는다.
+ */
 import {
   Entity,
   PrimaryGeneratedColumn,

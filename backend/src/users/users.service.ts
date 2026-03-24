@@ -1,3 +1,8 @@
+/**
+ * users.service.ts
+ * 사용자 비즈니스 로직. 이메일/ID로 사용자 조회, 신규 가입, Refresh Token 저장,
+ * 이름·비밀번호 프로필 수정, 전체 회원 목록 조회를 담당한다.
+ */
 import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

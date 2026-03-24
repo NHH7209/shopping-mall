@@ -1,3 +1,8 @@
+/**
+ * page.tsx (홈)
+ * 메인 홈페이지. 배너와 함께 판매량 기반 실시간 랭킹 및
+ * 조회수 기반 트렌딩 상품을 서버 컴포넌트로 렌더링한다.
+ */
 import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/types/product';
@@ -42,9 +47,9 @@ export default async function HomePage() {
               <Link key={product.id} href={`/products/${product.id}`}>
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   <div className="relative w-full h-48 bg-gray-100 overflow-hidden">
-                    {product.images.find((img) => img.isMain) && (
+                    {product.images[0] && (
                       <Image
-                        src={product.images.find((img) => img.isMain)!.url}
+                        src={product.images[0].url}
                         alt={product.name}
                         fill
                         className="object-cover transition-transform duration-300 hover:scale-105"
@@ -78,9 +83,9 @@ export default async function HomePage() {
               <Link key={product.id} href={`/products/${product.id}`}>
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   <div className="relative w-full h-48 bg-gray-100 overflow-hidden">
-                    {product.images.find((img) => img.isMain) && (
+                    {product.images[0] && (
                       <Image
-                        src={product.images.find((img) => img.isMain)!.url}
+                        src={product.images[0].url}
                         alt={product.name}
                         fill
                         className="object-cover transition-transform duration-300 hover:scale-105"

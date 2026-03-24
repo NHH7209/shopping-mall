@@ -1,3 +1,7 @@
+/**
+ * page.tsx (관리자 상품 등록)
+ * 새 상품을 등록하는 관리자 페이지. 상품 기본 정보 입력과 Cloudinary 이미지 업로드를 지원한다.
+ */
 'use client';
 
 import { useState } from 'react';
@@ -5,7 +9,6 @@ import { useRouter } from 'next/navigation';
 
 interface ImageInput {
   url: string;
-  isMain: boolean;
   sortOrder: number;
   preview: string; // 로컬 미리보기용 (업로드 전 브라우저에서만 보임)
   uploading: boolean; // 업로드 진행 중 여부
@@ -62,18 +65,13 @@ export default function AdminProductNewPage() {
   const addImage = () => {
     setImages([
       ...images,
-      { url: '', isMain: images.length === 0, sortOrder: images.length, preview: '', uploading: false },
+      { url: '', sortOrder: images.length, preview: '', uploading: false },
     ]);
   };
 
   const removeImage = (i: number) => {
-    const updated = images.filter((_, idx) => idx !== i);
-    if (images[i].isMain && updated.length > 0) updated[0].isMain = true;
-    setImages(updated);
+    setImages(images.filter((_, idx) => idx !== i));
   };
-
-  const setMainImage = (i: number) =>
-    setImages(images.map((img, idx) => ({ ...img, isMain: idx === i })));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +88,7 @@ export default function AdminProductNewPage() {
         stock: Number(form.stock),
         description: form.description,
         category: form.category || undefined,
-        images: validImages.map(({ url, isMain, sortOrder }) => ({ url, isMain, sortOrder })),
+        images: validImages.map(({ url, sortOrder }) => ({ url, sortOrder })),
       }),
     });
 
@@ -212,17 +210,6 @@ export default function AdminProductNewPage() {
                   onChange={(e) => handleFileChange(e, i)}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                 />
-
-                {/* 대표 이미지 뱃지 */}
-                <button
-                  type="button"
-                  onClick={() => setMainImage(i)}
-                  className={`absolute bottom-1 left-1 text-xs px-1.5 py-0.5 rounded font-medium ${
-                    img.isMain ? 'bg-gray-900 text-white' : 'bg-white/80 text-gray-500'
-                  }`}
-                >
-                  대표
-                </button>
 
                 {/* 삭제 버튼 */}
                 <button

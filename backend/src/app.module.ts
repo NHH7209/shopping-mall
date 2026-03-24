@@ -1,3 +1,8 @@
+/**
+ * app.module.ts
+ * 루트 모듈. 환경변수(ConfigModule), DB 연결(TypeORM), 그리고
+ * 모든 기능 모듈(Auth, Users, Products, Cart, Orders, Payments, Reviews, Addresses)을 등록한다.
+ */
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';

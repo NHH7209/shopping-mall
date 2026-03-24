@@ -1,3 +1,7 @@
+/**
+ * loading.tsx (상품 목록 로딩 스켈레톤)
+ * 상품 목록 페이지 로딩 중 표시되는 스켈레톤 UI. Next.js의 Streaming으로 자동 렌더링된다.
+ */
 export default function ProductsLoading() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">

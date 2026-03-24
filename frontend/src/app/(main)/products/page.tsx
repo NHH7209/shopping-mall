@@ -1,3 +1,8 @@
+/**
+ * page.tsx (상품 목록)
+ * 상품 목록 페이지. 검색어·카테고리로 필터링하고 가격·인기순으로 정렬한다.
+ * 서버 컴포넌트로 구현되어 SEO와 초기 로딩 성능에 유리하다.
+ */
 import { Suspense } from "react";
 import ProductCard from "@/components/product/ProductCard";
 import ProductFilters from "@/components/product/ProductFilters";

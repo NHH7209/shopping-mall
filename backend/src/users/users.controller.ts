@@ -1,3 +1,8 @@
+/**
+ * users.controller.ts
+ * 사용자 컨트롤러. 프로필 수정(PATCH /users/profile)과
+ * 관리자용 전체 회원 목록 조회(GET /users/admin)를 처리한다.
+ */
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';

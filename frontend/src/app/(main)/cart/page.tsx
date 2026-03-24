@@ -1,3 +1,8 @@
+/**
+ * page.tsx (장바구니)
+ * 장바구니 페이지. Zustand cartStore와 연동해 상품 목록, 수량 조절,
+ * 삭제, 총 금액·배송비 계산, 주문하기 버튼을 제공한다.
+ */
 'use client';
 
 import { useEffect } from 'react';
@@ -37,8 +42,7 @@ export default function CartPage() {
           {/* 상품 목록 */}
           <div className="flex-1 flex flex-col gap-4">
             {items.map((item) => {
-              const mainImage = item.product.images?.find((img) => img.isMain)?.url
-                ?? item.product.images?.[0]?.url;
+              const mainImage = item.product.images?.[0]?.url;
               return (
                 <div
                   key={item.id}

@@ -1,3 +1,8 @@
+/**
+ * AuthInitializer.tsx
+ * 앱 최초 로드 시 Refresh Token 쿠키로 세션을 자동 복원하는 컴포넌트.
+ * 루트 layout.tsx에 배치되어 페이지 새로고침 후에도 로그인 상태를 유지한다.
+ */
 'use client';
 
 import { useEffect } from 'react';

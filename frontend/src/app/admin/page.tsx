@@ -1,3 +1,8 @@
+/**
+ * page.tsx (관리자 대시보드)
+ * 관리자 대시보드. 전체·활성 상품 수, 전체 주문 수, 처리 대기 수 통계 카드와
+ * 최근 등록 상품 및 최근 주문 현황을 표시한다.
+ */
 'use client';
 
 import { useEffect, useState } from 'react';

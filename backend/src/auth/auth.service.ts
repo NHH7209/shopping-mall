@@ -1,3 +1,8 @@
+/**
+ * auth.service.ts
+ * 인증 비즈니스 로직. 비밀번호 해싱(bcrypt), JWT Access/Refresh 토큰 발급,
+ * Refresh Token 검증 및 갱신, 로그아웃 시 토큰 무효화를 담당한다.
+ */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';

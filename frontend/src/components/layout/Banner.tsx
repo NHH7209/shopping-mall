@@ -1,3 +1,8 @@
+/**
+ * Banner.tsx
+ * 홈 및 상품 목록 상단 자동 슬라이드 배너. 3초 간격으로 자동 전환되며
+ * 이전/다음 버튼과 인디케이터 버튼으로 수동 조작도 가능하다.
+ */
 "use client";
 
 import { useState, useEffect } from "react";

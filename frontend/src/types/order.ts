@@ -1,3 +1,8 @@
+/**
+ * order.ts
+ * 주문 관련 TypeScript 타입 정의. 주문 상태 타입, 한국어 라벨 매핑,
+ * OrderItem, Order 인터페이스를 정의한다.
+ */
 import { Product } from './product';
 
 export type OrderStatus = 'pending' | 'paid' | 'shipping' | 'delivered' | 'cancelled';

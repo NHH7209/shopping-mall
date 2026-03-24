@@ -1,3 +1,8 @@
+/**
+ * page.tsx (결제 성공)
+ * Toss 결제 완료 후 리다이렉트되는 페이지. URL의 paymentKey·orderId·amount로
+ * 백엔드에 최종 승인 요청을 보내고 장바구니를 초기화한다.
+ */
 'use client';
 
 import { useEffect, useState, useRef } from 'react';

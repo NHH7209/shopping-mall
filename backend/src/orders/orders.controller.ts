@@ -1,3 +1,8 @@
+/**
+ * orders.controller.ts
+ * 주문 컨트롤러. 주문 생성·조회·취소(고객용)와 전체 주문 목록·상태 변경·통계(관리자용)
+ * 엔드포인트를 처리한다.
+ */
 import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { OrdersService } from './orders.service';

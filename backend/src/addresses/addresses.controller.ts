@@ -1,3 +1,8 @@
+/**
+ * addresses.controller.ts
+ * 배송지 컨트롤러. 배송지 목록 조회, 추가, 기본 배송지 설정, 삭제
+ * 엔드포인트를 처리한다. JWT 인증이 필수이다.
+ */
 import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AddressesService } from './addresses.service';

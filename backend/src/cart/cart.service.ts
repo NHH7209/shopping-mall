@@ -1,3 +1,8 @@
+/**
+ * cart.service.ts
+ * 장바구니 비즈니스 로직. 사용자별 장바구니 조회/생성, 상품 담기(중복 시 수량 증가),
+ * 수량 변경, 아이템 삭제 기능을 담당한다.
+ */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

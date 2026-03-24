@@ -1,3 +1,8 @@
+/**
+ * order-item.entity.ts
+ * 주문 아이템 엔티티. 주문 시점의 상품명·가격을 스냅샷으로 저장해
+ * 나중에 상품 정보가 변경·삭제되어도 주문 내역이 보존된다.
+ */
 import {
   Entity,
   PrimaryGeneratedColumn,

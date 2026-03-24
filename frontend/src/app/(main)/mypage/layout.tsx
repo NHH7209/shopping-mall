@@ -1,3 +1,8 @@
+/**
+ * layout.tsx (마이페이지)
+ * 마이페이지 공통 레이아웃. 사이드 네비게이션(프로필 수정, 주문 내역, 배송지 관리)을
+ * 포함하며 모든 마이페이지 하위 라우트에 적용된다.
+ */
 import Link from 'next/link';
 
 const navItems = [

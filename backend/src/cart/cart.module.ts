@@ -1,3 +1,8 @@
+/**
+ * cart.module.ts
+ * 장바구니 모듈. Cart, CartItem, Product 엔티티를 등록하고
+ * CartService를 OrdersModule 등 외부 모듈에서 사용할 수 있도록 export한다.
+ */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CartController } from './cart.controller';

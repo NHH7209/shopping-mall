@@ -1,3 +1,8 @@
+/**
+ * page.tsx (주문 상세)
+ * 주문 상세 페이지. 주문 상태, 상품 목록, 배송지, 결제 금액을 표시하며
+ * PENDING/PAID 상태에서는 취소, 모든 주문에서 재주문 기능을 제공한다.
+ */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -93,8 +98,7 @@ export default function OrderDetailPage() {
       <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4">
         <h3 className="text-sm font-semibold text-gray-700 mb-4">주문 상품</h3>
         {order.items.map((item) => {
-          const mainImage = item.product?.images?.find((img) => img.isMain)?.url
-            ?? item.product?.images?.[0]?.url;
+          const mainImage = item.product?.images?.[0]?.url;
           return (
             <div key={item.id} className="flex gap-4 py-2 border-b border-gray-100 last:border-b-0">
               <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">

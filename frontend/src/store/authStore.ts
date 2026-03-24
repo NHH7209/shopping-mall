@@ -1,3 +1,8 @@
+/**
+ * authStore.ts
+ * Zustand 인증 전역 상태. 사용자 정보와 Access Token을 메모리에 저장하고,
+ * 로그인/로그아웃 시 미들웨어가 읽을 수 있도록 브라우저 쿠키도 함께 동기화한다.
+ */
 import { create } from 'zustand';
 import { User } from '@/types/user';
 import { useCartStore } from './cartStore';

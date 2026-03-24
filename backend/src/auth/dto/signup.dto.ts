@@ -1,3 +1,7 @@
+/**
+ * signup.dto.ts
+ * 회원가입 요청 DTO. 이름, 이메일 형식, 비밀번호 최소 길이(8자)를 검증한다.
+ */
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
 export class SignupDto {

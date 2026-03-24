@@ -1,3 +1,8 @@
+/**
+ * orders.service.ts
+ * 주문 비즈니스 로직. 장바구니 → 주문 변환, 재고 차감/복구, 배송비 계산(3만원 이상 무료),
+ * 주문 취소, 관리자 상태 변경, 대시보드 통계를 담당한다.
+ */
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

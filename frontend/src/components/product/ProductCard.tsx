@@ -1,9 +1,14 @@
+/**
+ * ProductCard.tsx
+ * 상품 카드 컴포넌트. 대표 이미지, 상품명, 가격을 표시하며
+ * 클릭 시 상품 상세 페이지로 이동한다.
+ */
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
 
 export default function ProductCard({ product }: { product: Product }) {
-  const mainImage = product.images.find((img) => img.isMain) || product.images[0];
+  const mainImage = product.images[0];
 
   return (
     <Link href={`/products/${product.id}`}>

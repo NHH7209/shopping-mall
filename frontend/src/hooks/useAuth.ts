@@ -1,3 +1,8 @@
+/**
+ * useAuth.ts
+ * 인증 커스텀 훅. 로그인·회원가입·로그아웃 액션과 현재 사용자 정보를 제공한다.
+ * 로그인 성공 시 장바구니도 함께 서버에서 불러온다.
+ */
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';

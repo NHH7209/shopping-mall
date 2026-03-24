@@ -1,3 +1,7 @@
+/**
+ * Footer.tsx
+ * 전역 푸터 컴포넌트. 프로젝트에 사용된 기술 스택 태그와 저작권 정보를 표시한다.
+ */
 const skills = {
   Frontend: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Zustand", "Axios"],
   Backend: ["NestJS", "TypeORM", "PostgreSQL", "JWT", "Passport", "Bcrypt", "class-validator", "Multer", "Swagger"],

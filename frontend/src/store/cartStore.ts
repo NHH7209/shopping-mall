@@ -1,3 +1,8 @@
+/**
+ * cartStore.ts
+ * Zustand 장바구니 전역 상태. 서버와 실시간 동기화되며 상품 담기,
+ * 수량 변경, 아이템 삭제, 로그아웃 시 초기화 기능을 제공한다.
+ */
 import { create } from 'zustand';
 import api from '@/lib/api';
 import { CartItem } from '@/types/cart';

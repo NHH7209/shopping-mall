@@ -1,3 +1,8 @@
+/**
+ * page.tsx (관리자 상품 수정)
+ * 기존 상품을 수정하는 관리자 페이지. URL의 [id]로 상품 데이터를 불러와 폼에 채우고,
+ * 이미지 URL 관리 및 활성/비활성 토글 기능을 제공한다.
+ */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,7 +13,6 @@ import { Product } from '@/types/product';
 
 interface ImageInput {
   url: string;
-  isMain: boolean;
   sortOrder: number;
 }
 
@@ -55,10 +59,9 @@ export default function AdminProductEditPage() {
         product.images.length > 0
           ? product.images.map((img) => ({
               url: img.url,
-              isMain: img.isMain,
               sortOrder: img.sortOrder,
             }))
-          : [{ url: '', isMain: true, sortOrder: 0 }],
+          : [{ url: '', sortOrder: 0 }],
       );
       setFetching(false);
     };
@@ -91,16 +94,11 @@ export default function AdminProductEditPage() {
   };
 
   const addImage = () =>
-    setImages([...images, { url: '', isMain: false, sortOrder: images.length }]);
+    setImages([...images, { url: '', sortOrder: images.length }]);
 
   const removeImage = (i: number) => {
-    const updated = images.filter((_, idx) => idx !== i);
-    if (images[i].isMain && updated.length > 0) updated[0].isMain = true;
-    setImages(updated);
+    setImages(images.filter((_, idx) => idx !== i));
   };
-
-  const setMainImage = (i: number) =>
-    setImages(images.map((img, idx) => ({ ...img, isMain: idx === i })));
 
   const updateImageUrl = (i: number, url: string) =>
     setImages(images.map((img, idx) => (idx === i ? { ...img, url } : img)));
@@ -237,17 +235,6 @@ export default function AdminProductEditPage() {
                   className="flex-1 border border-gray-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:border-gray-900"
                   placeholder="https://example.com/image.jpg"
                 />
-                <button
-                  type="button"
-                  onClick={() => setMainImage(i)}
-                  className={`text-xs px-3 py-2.5 rounded-lg border flex-shrink-0 transition-colors ${
-                    img.isMain
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'border-gray-300 text-gray-500 hover:bg-gray-50'
-                  }`}
-                >
-                  대표
-                </button>
                 {images.length > 1 && (
                   <button
                     type="button"

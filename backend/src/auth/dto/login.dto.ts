@@ -1,3 +1,7 @@
+/**
+ * login.dto.ts
+ * 로그인 요청 DTO. 이메일과 비밀번호의 형식 유효성을 검증한다.
+ */
 import { IsEmail, IsString } from 'class-validator';
 
 export class LoginDto {

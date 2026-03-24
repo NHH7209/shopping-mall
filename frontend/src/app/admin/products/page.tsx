@@ -1,3 +1,8 @@
+/**
+ * page.tsx (관리자 상품 목록)
+ * 관리자 상품 목록 페이지. 비활성 상품 포함 전체 상품을 테이블로 표시하며
+ * 수정 페이지 이동 및 상품 삭제 기능을 제공한다.
+ */
 'use client';
 
 // 삭제 버튼 등 인터랙션이 필요해서 클라이언트 컴포넌트로 작성
@@ -83,9 +88,9 @@ export default function AdminProductsPage() {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                      {product.images.find((img) => img.isMain) && (
+                      {product.images[0] && (
                         <img
-                          src={product.images.find((img) => img.isMain)!.url}
+                          src={product.images[0].url}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />

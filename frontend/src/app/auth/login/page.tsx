@@ -1,3 +1,8 @@
+/**
+ * page.tsx (로그인)
+ * 로그인 폼 페이지. 이메일·비밀번호 입력 후 useAuth 훅으로 로그인하며,
+ * 관리자는 /admin, 일반 사용자는 이전 페이지 또는 홈으로 리다이렉트한다.
+ */
 'use client';
 
 import { Suspense, useState } from 'react';

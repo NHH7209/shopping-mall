@@ -1,3 +1,8 @@
+/**
+ * product.entity.ts
+ * 상품 엔티티. 이름, 설명, 가격, 재고, 활성 여부, 카테고리,
+ * 조회수(viewCount), 판매수(salesCount), 이미지 목록을 관리한다.
+ */
 import {
   Column,
   CreateDateColumn,

@@ -1,3 +1,8 @@
+/**
+ * api.ts
+ * Axios 인스턴스 및 인터셉터 설정. 모든 요청에 Access Token을 자동으로 첨부하고,
+ * 401 에러 발생 시 Refresh Token으로 자동 갱신 후 원래 요청을 재시도한다.
+ */
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 

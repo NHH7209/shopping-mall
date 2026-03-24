@@ -1,3 +1,8 @@
+/**
+ * products.module.ts
+ * 상품 모듈. Product, ProductImage 엔티티를 등록하고 Cloudinary 모듈을 임포트해
+ * 이미지 업로드 기능을 포함한 상품 CRUD를 제공한다.
+ */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';

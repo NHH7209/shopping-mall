@@ -1,3 +1,8 @@
+/**
+ * page.tsx (결제)
+ * 결제 페이지. 저장된 배송지 또는 직접 입력으로 주문을 생성하고
+ * Toss Payments SDK를 통해 카드 결제를 진행한다. 바로 구매 모드도 지원한다.
+ */
 'use client';
 
 import { useState, useEffect } from 'react';

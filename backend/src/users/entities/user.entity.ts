@@ -1,3 +1,8 @@
+/**
+ * user.entity.ts
+ * 사용자 엔티티. id, 이름, 이메일(유니크), 비밀번호(해시), 역할(user/admin),
+ * Refresh Token을 컬럼으로 가진다. AuthModule과 밀접하게 연관된다.
+ */
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export enum UserRole {

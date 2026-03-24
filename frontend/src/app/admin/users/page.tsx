@@ -1,3 +1,7 @@
+/**
+ * page.tsx (관리자 회원 목록)
+ * 관리자 회원 관리 페이지. 전체 회원의 ID, 이름, 이메일, 권한, 가입일을 표시한다.
+ */
 'use client';
 
 import { useEffect, useState } from 'react';

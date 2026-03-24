@@ -1,3 +1,8 @@
+/**
+ * addresses.service.ts
+ * 배송지 비즈니스 로직. 배송지 목록 조회, 추가(첫 번째는 자동으로 기본 설정),
+ * 기본 배송지 변경, 배송지 삭제를 담당한다.
+ */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

@@ -1,3 +1,8 @@
+/**
+ * cloudinary.service.ts
+ * 이미지 업로드 서비스. Multer로 받은 파일 버퍼를 스트림으로 변환해
+ * Cloudinary의 shopping-mall/products 폴더에 업로드하고 URL을 반환한다.
+ */
 import { Injectable } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { Readable } from 'stream';

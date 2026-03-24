@@ -1,3 +1,8 @@
+/**
+ * NavigationMenu.tsx
+ * 헤더 하단 고정 네비게이션 바. 카테고리 드롭다운 메뉴와
+ * 신상품·베스트·특가·기획전·브랜드·이벤트 링크를 제공한다.
+ */
 "use client";
 
 import Link from "next/link";

@@ -1,3 +1,8 @@
+/**
+ * payments.service.ts
+ * 결제 비즈니스 로직. 주문 금액 검증, Toss Payments API 최종 승인 요청,
+ * 결제 기록 저장, 주문 상태를 PAID로 변경하는 과정을 처리한다.
+ */
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

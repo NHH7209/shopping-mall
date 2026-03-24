@@ -1,3 +1,8 @@
+/**
+ * order.entity.ts
+ * 주문 엔티티. 주문 상태(PENDING→PAID→SHIPPING→DELIVERED/CANCELLED),
+ * 배송지 정보, 총 금액, 배송비를 저장한다.
+ */
 import {
   Entity,
   PrimaryGeneratedColumn,

@@ -1,3 +1,8 @@
+/**
+ * cart.entity.ts
+ * 장바구니 엔티티. 사용자 1명당 하나(OneToOne)의 장바구니를 가지며,
+ * 여러 CartItem을 포함한다.
+ */
 import {
   Entity,
   PrimaryGeneratedColumn,
