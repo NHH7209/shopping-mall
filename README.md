@@ -122,121 +122,17 @@
 
 ## 5. 시스템 아키텍처
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                          Client (Browser)                        │
-│  Next.js 16 (App Router)  │  Zustand (전역 상태)                  │
-│  Axios + Interceptor       │  Middleware (라우트 보호)              │
-└────────────────────────────────────────────────────────────────-─┘
-                    │ HTTPS (withCredentials: true)
-                    ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    NestJS API Server (Railway)                    │
-│                                                                   │
-│  Auth │ Users │ Products │ Cart │ Orders │ Payments │ Reviews    │
-│                                                                   │
-│  JwtAuthGuard  │  RolesGuard  │  ValidationPipe                  │
-└───────────────────────────┬─────────────────┬───────────────────┘
-                            │                 │
-              ┌─────────────▼─────┐    ┌──────▼──────────┐
-              │  PostgreSQL (DB)   │    │  Cloudinary CDN  │
-              │  TypeORM          │    │  (이미지 저장)    │
-              └───────────────────┘    └─────────────────-┘
-                                                │
-                                    ┌───────────▼──────────┐
-                                    │  Toss Payments API    │
-                                    │  (결제 승인)           │
-                                    └──────────────────────┘
-```
+![시스템 아키텍처](docs/시스템%20아키텍처.png)
 
-### 인증 흐름
+### 인증 흐름 (Auth Flow)
 
-```
-로그인 요청
-    │
-    ▼
-NestJS: accessToken (15분) + refreshToken (7일, HttpOnly 쿠키) 발급
-    │
-    ▼
-API 요청: Authorization: Bearer {accessToken}
-    │
-401 Unauthorized (accessToken 만료)
-    │
-    ▼
-Axios Interceptor: POST /auth/refresh (쿠키의 refreshToken 자동 전송)
-    │
-    ▼
-새 accessToken 발급 → 원래 요청 자동 재시도
-```
+![Auth Flow](docs/auth-flow.drawio.png)
 
 <br/>
 
 ## 6. ERD
 
-```
-┌──────────┐       ┌──────────────┐       ┌──────────────┐
-│  users   │1────N │   orders     │1────N │ order_items  │
-│──────────│       │──────────────│       │──────────────│
-│ id       │       │ id (uuid)    │       │ id           │
-│ name     │       │ user_id (FK) │  ┌───►│ order_id(FK) │
-│ email    │       │ status       │  │    │ product_id   │
-│ password │       │ recipient    │  │    │ productName  │◄─ 주문 시점
-│ role     │       │ phone        │  │    │ price        │   가격/이름
-│          │       │ address      │  │    │ quantity     │   스냅샷
-│          │1───1  │ totalPrice   │  │    └──────────────┘
-│          │       │ shippingFee  │  │
-│          │       └──────┬───────┘  │
-│          │              │1         │
-│          │              ▼          │
-│          │       ┌──────────────┐  │    ┌──────────────┐
-│          │       │  payments    │  │    │   products   │
-│          │       │──────────────│  │    │──────────────│
-│          │       │ id           │  │    │ id (uuid)    │
-│          │       │ order_id(FK) │  └────│ name         │
-│          │       │ paymentKey   │       │ price        │
-│          │       │ amount       │       │ stock        │
-│          │       │ status       │       │ isActive     │
-│          │       └──────────────┘       │ category     │
-│          │                              │ viewCount    │
-│          │1───1  ┌──────────────┐       │ salesCount   │
-│          │       │    carts     │  ┌───►│              │
-│          │       │──────────────│  │    └──────┬───────┘
-│          │       │ id           │  │           │1
-│          │       │ user_id (FK) │  │           ▼
-│          │       └──────┬───────┘  │    ┌──────────────┐
-│          │              │1         │    │product_images│
-│          │              ▼          │    │──────────────│
-│          │       ┌──────────────┐  │    │ id           │
-│          │       │  cart_items  │  │    │ product_id   │
-│          │       │──────────────│  │    │ url          │
-│          │       │ id           │  │    │ isMain       │
-│          │       │ cart_id (FK) │  │    │ sortOrder    │
-│          │       │ product_id ──┼──┘    └──────────────┘
-│          │       │ quantity     │
-│          │       └──────────────┘
-│          │
-│          │1───N  ┌──────────────┐
-│          │       │   reviews    │
-│          │       │──────────────│
-│          │       │ id           │
-│          │       │ user_id (FK) │
-│          │       │ product_id   │
-│          │       │ rating (1~5) │
-│          │       │ content      │
-│          │       └──────────────┘
-│          │
-│          │1───N  ┌──────────────┐
-│          │       │  addresses   │
-│          │       │──────────────│
-│          │       │ id           │
-└──────────┘       │ user_id (FK) │
-                   │ label        │
-                   │ recipient    │
-                   │ phone        │
-                   │ address      │
-                   │ isDefault    │
-                   └──────────────┘
-```
+![ERD](docs/화장품%20웹%20ERD.png)
 
 <br/>
 
