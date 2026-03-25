@@ -118,6 +118,10 @@
 |:---:|:---:|
 | ![admin](docs/screenshots/admin-dashboard.png) | ![admin-products](docs/screenshots/admin-products.png) |
 
+| 주문 내역 (사용자) | 주문 관리 (관리자) |
+|:---:|:---:|
+| ![user-order](docs/screenshots/user-order.png) | ![admin-order](docs/screenshots/admin-order.png) |
+
 <br/>
 
 ## 5. 시스템 아키텍처
