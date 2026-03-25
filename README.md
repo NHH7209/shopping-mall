@@ -460,6 +460,35 @@ await this.productRepository.decrement({ id: item.product.id }, 'salesCount', it
 
 ---
 
+### 6. 결제 성공 페이지에서 accessToken 복구 전 승인 API 호출
+
+**문제**
+
+Toss Payments 결제 완료 후 `/checkout/success` 페이지로 리다이렉트되면, 컴포넌트가 마운트되자마자 결제 승인 API(`POST /payments/confirm`)를 호출합니다. 그런데 페이지 이동 시 Zustand store가 초기화되어 `accessToken`이 아직 `null`인 상태에서 요청이 나가 인증 헤더가 없어 401 에러가 발생했습니다.
+
+**해결**
+
+`useEffect` 의존성 배열에 `accessToken`을 추가해 토큰이 복구된 이후에만 API를 호출하도록 수정했습니다.
+
+```typescript
+// 수정 전: 마운트 즉시 호출 → accessToken이 null일 수 있음
+useEffect(() => {
+  if (called.current) return;
+  called.current = true;
+  // ... 결제 승인 API 호출
+}, [searchParams, clearCart]);
+
+// 수정 후: accessToken이 있을 때만 호출
+useEffect(() => {
+  if (!accessToken) return; // 토큰 복구까지 대기
+  if (called.current) return;
+  called.current = true;
+  // ... 결제 승인 API 호출
+}, [accessToken, searchParams, clearCart]);
+```
+
+---
+
 ### 7. TypeORM eager 로딩과 명시적 relations 충돌로 이미지 미조회
 
 **문제**
@@ -506,6 +535,81 @@ const payment = toss.payment({ customerKey: `user_${user?.id}` });
     router.push(`/checkout/fail?message=${encodeURIComponent(message)}`);
   }
 }
+```
+
+---
+
+### 9. 판매 중단 상품이 장바구니에서 주문 가능
+
+**문제**
+
+`isActive: false`로 설정된 판매 중단 상품이 장바구니에 담겨있는 경우, 주문 생성 시 재고 검증만 있고 활성 상태 검증이 없어 그대로 주문이 생성되는 문제가 있었습니다.
+
+**해결**
+
+주문 생성 시 재고 부족 검증과 함께 비활성 상품 체크를 추가했습니다.
+
+```typescript
+// 비활성 상품 체크
+const inactiveItems = cart.items.filter((item) => !item.product.isActive);
+if (inactiveItems.length > 0) {
+  const names = inactiveItems.map((item) => item.product.name).join(', ');
+  throw new BadRequestException(`현재 판매 중단된 상품이 있습니다: ${names}`);
+}
+```
+
+---
+
+### 10. Next.js App Router 빌드 에러 (useSearchParams Suspense 누락)
+
+**문제**
+
+`useSearchParams()`를 사용하는 로그인 페이지에서 `yarn build` 시 빌드가 실패했습니다. Next.js App Router에서 `useSearchParams()`는 `<Suspense>` 경계 안에서만 사용 가능하며, 없으면 빌드 단계에서 에러가 발생합니다.
+
+**해결**
+
+`useSearchParams()`를 사용하는 컴포넌트를 분리하고 `<Suspense>`로 감쌌습니다.
+
+```typescript
+// 수정 전: useSearchParams를 페이지 컴포넌트에서 직접 사용
+export default function LoginPage() {
+  const searchParams = useSearchParams(); // ❌ 빌드 에러
+  ...
+}
+
+// 수정 후: Suspense로 감싸기
+function LoginForm() {
+  const searchParams = useSearchParams(); // ✅
+  ...
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
+```
+
+---
+
+### 11. isMain과 sortOrder 이중 기준으로 대표 이미지 불일치
+
+**문제**
+
+상품 대표 이미지를 결정하는 기준이 `isMain` 필드와 `sortOrder` 두 가지로 나뉘어 있었습니다. 이미지 등록 시 `isMain`은 업데이트되지 않거나 `sortOrder`와 다른 이미지를 가리키는 경우가 발생해 프론트엔드에서 대표 이미지가 일관되지 않게 표시됐습니다.
+
+**해결**
+
+`isMain` 필드를 엔티티에서 제거하고 `sortOrder: 0`인 이미지를 대표 이미지로 통일했습니다. 기준이 하나로 줄어 이미지 관련 로직이 단순해졌습니다.
+
+```typescript
+// 수정 전: isMain으로 대표 이미지 판별
+const mainImage = product.images.find((img) => img.isMain);
+
+// 수정 후: sortOrder 기준으로 통일
+const mainImage = product.images.sort((a, b) => a.sortOrder - b.sortOrder)[0];
 ```
 
 <br/>
