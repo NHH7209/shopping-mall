@@ -4,6 +4,13 @@
 
 **🔗 배포 링크: [https://blueme.vercel.app](https://blueme.vercel.app)**
 
+### 테스트 계정
+
+| 구분 | 이메일 | 비밀번호 |
+|------|--------|----------|
+| 일반 사용자 | test@test.com | test1234 |
+| 관리자 | admin@test.com | admin1234 |
+
 <br/>
 
 ## 목차
