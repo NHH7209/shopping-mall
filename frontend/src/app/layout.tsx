@@ -8,7 +8,7 @@ import "./globals.css";
 import AuthInitializer from "@/components/AuthInitializer";
 
 export const metadata: Metadata = {
-  title: "Shopping Mall",
+  title: "BlueMe",
   description: "쇼핑몰 프로젝트",
 };
 

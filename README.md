@@ -415,6 +415,263 @@ const payment = toss.payment({ customerKey: `user_${user?.id}` });
 }
 ```
 
+---
+
+### 9. 판매 중단 상품이 장바구니에서 주문 가능
+
+**문제**
+
+`isActive: false`로 설정된 판매 중단 상품이 장바구니에 담겨있는 경우, 주문 생성 시 재고 검증만 있고 활성 상태 검증이 없어 그대로 주문이 생성되는 문제가 있었습니다.
+
+**해결**
+
+주문 생성 시 재고 부족 검증과 함께 비활성 상품 체크를 추가했습니다.
+
+```typescript
+// 비활성 상품 체크
+const inactiveItems = cart.items.filter((item) => !item.product.isActive);
+if (inactiveItems.length > 0) {
+  const names = inactiveItems.map((item) => item.product.name).join(', ');
+  throw new BadRequestException(`현재 판매 중단된 상품이 있습니다: ${names}`);
+}
+```
+
+---
+
+### 10. Next.js App Router 빌드 에러 (useSearchParams Suspense 누락)
+
+**문제**
+
+`useSearchParams()`를 사용하는 로그인 페이지에서 `yarn build` 시 빌드가 실패했습니다. Next.js App Router에서 `useSearchParams()`는 `<Suspense>` 경계 안에서만 사용 가능하며, 없으면 빌드 단계에서 에러가 발생합니다.
+
+**해결**
+
+`useSearchParams()`를 사용하는 컴포넌트를 분리하고 `<Suspense>`로 감쌌습니다.
+
+```typescript
+// 수정 전: useSearchParams를 페이지 컴포넌트에서 직접 사용
+export default function LoginPage() {
+  const searchParams = useSearchParams(); // ❌ 빌드 에러
+  ...
+}
+
+// 수정 후: Suspense로 감싸기
+function LoginForm() {
+  const searchParams = useSearchParams(); // ✅
+  ...
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
+```
+
+---
+
+### 11. isMain과 sortOrder 이중 기준으로 대표 이미지 불일치
+
+**문제**
+
+상품 대표 이미지를 결정하는 기준이 `isMain` 필드와 `sortOrder` 두 가지로 나뉘어 있었습니다. 이미지 등록 시 `isMain`은 업데이트되지 않거나 `sortOrder`와 다른 이미지를 가리키는 경우가 발생해 프론트엔드에서 대표 이미지가 일관되지 않게 표시됐습니다.
+
+**해결**
+
+`isMain` 필드를 엔티티에서 제거하고 `sortOrder: 0`인 이미지를 대표 이미지로 통일했습니다. 기준이 하나로 줄어 이미지 관련 로직이 단순해졌습니다.
+
+```typescript
+// 수정 전: isMain으로 대표 이미지 판별
+const mainImage = product.images.find((img) => img.isMain);
+
+// 수정 후: sortOrder 기준으로 통일
+const mainImage = product.images.sort((a, b) => a.sortOrder - b.sortOrder)[0];
+```
+
+---
+
+### 12. 로딩 중 빈 화면 노출
+
+**문제**
+
+상품 목록 페이지에서 데이터를 불러오는 동안 아무것도 표시되지 않아 사용자가 페이지가 멈춘 것으로 오해할 수 있었습니다.
+
+**해결**
+
+Next.js App Router의 `loading.tsx` 컨벤션을 활용해 스켈레톤 UI를 적용했습니다. 페이지와 동일한 레이아웃 구조를 유지하면서 `animate-pulse`로 부드러운 로딩 애니메이션을 표시합니다.
+
+```typescript
+// app/(main)/products/loading.tsx
+export default function ProductsLoading() {
+  return (
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="flex gap-2 mb-8 animate-pulse">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="h-8 w-20 bg-gray-100 rounded-full" />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        {[...Array(12)].map((_, i) => (
+          <div key={i} className="animate-pulse">
+            <div className="aspect-square bg-gray-100 rounded-xl mb-3" />
+            <div className="h-4 bg-gray-100 rounded w-3/4 mb-2" />
+            <div className="h-4 bg-gray-100 rounded w-1/2" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+별도 로딩 상태 관리 없이 파일 하나로 해결되며, Suspense 경계가 자동으로 적용됩니다.
+
+---
+
+### 13. 장바구니 담기 후 UX 단절
+
+**문제**
+
+상품을 장바구니에 담으면 곧바로 장바구니 페이지로 이동했습니다. 여러 상품을 연속으로 담으려는 사용자가 매번 상품 상세 페이지로 되돌아가야 하는 불편함이 있었습니다.
+
+**해결**
+
+장바구니 담기 성공 시 페이지 이동 대신 모달을 표시하고, 사용자가 "계속 쇼핑" 또는 "장바구니 보기"를 직접 선택하도록 변경했습니다.
+
+```typescript
+// 수정 전: 담기 성공 시 바로 페이지 이동
+await addItem(product.id, qty);
+router.push('/cart');
+
+// 수정 후: 모달로 사용자 선택 유도
+const [showModal, setShowModal] = useState(false);
+
+await addItem(product.id, qty);
+setShowModal(true);
+
+{showModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="absolute inset-0 bg-black/30" onClick={() => setShowModal(false)} />
+    <div className="relative bg-white rounded-2xl p-8 w-80 text-center shadow-xl">
+      <h3 className="text-base font-bold text-gray-900 mb-1">장바구니에 담았습니다</h3>
+      <div className="flex gap-2">
+        <button onClick={() => setShowModal(false)}>계속 쇼핑</button>
+        <button onClick={() => router.push('/cart')}>장바구니 보기</button>
+      </div>
+    </div>
+  </div>
+)}
+```
+
+---
+
+### 14. 재고 부족을 결제 단계에서야 인지
+
+**문제**
+
+장바구니에 담긴 상품의 재고가 부족해도 결제 버튼을 눌러 주문 생성 요청을 보내기 전까지 사용자가 이를 알 수 없었습니다. 에러 발생 시 `alert()`로만 처리해 UX가 좋지 않았습니다.
+
+**해결**
+
+백엔드에서 주문 생성 시 재고를 검증하고, 프론트엔드에서는 에러 메시지를 `alert()` 대신 결제 폼 내 인라인으로 표시했습니다.
+
+```typescript
+// backend: 주문 생성 시 재고 검증
+const outOfStockItems = cart.items.filter((item) => item.product.stock < item.quantity);
+if (outOfStockItems.length > 0) throw new BadRequestException('재고가 부족한 상품이 있습니다.');
+
+// frontend: 인라인 에러 표시
+const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+try {
+  await api.post('/orders', delivery);
+} catch (err: any) {
+  if (err?.response?.data?.message) {
+    setErrorMsg(err.response.data.message); // alert 대신 인라인 표시
+    return;
+  }
+}
+
+{errorMsg && (
+  <p className="text-xs text-red-500 text-center mb-3">{errorMsg}</p>
+)}
+```
+
+---
+
+### 15. 새로고침 시 필터 상태 초기화
+
+**문제**
+
+카테고리나 정렬 필터를 선택한 뒤 페이지를 새로고침하거나 뒤로가기를 하면 필터 상태가 초기화됐습니다. React 상태(useState)로만 관리하고 있어 URL에 반영되지 않는 것이 원인이었습니다.
+
+**해결**
+
+`useState` 대신 `useSearchParams`와 `useRouter`를 사용해 필터 상태를 URL 쿼리스트링으로 관리했습니다. 필터 변경 시 URL이 업데이트되어 새로고침, 뒤로가기, 링크 공유 시에도 상태가 유지됩니다.
+
+```typescript
+// 수정 전: useState로 관리 → 새로고침 시 초기화
+const [category, setCategory] = useState('');
+
+// 수정 후: URL 쿼리스트링으로 관리
+const router = useRouter();
+const searchParams = useSearchParams();
+const currentCategory = searchParams.get('category') ?? '';
+
+function updateParam(key: string, value: string | null) {
+  const params = new URLSearchParams(searchParams.toString());
+  if (value) params.set(key, value);
+  else params.delete(key);
+  router.push(`/products?${params.toString()}`);
+}
+// /products?category=스킨케어&sort=price_asc → 새로고침해도 유지
+```
+
+서버 컴포넌트에서도 `searchParams`로 동일한 값을 읽어 SSR 시 필터가 적용된 상태로 렌더링됩니다.
+
+---
+
+### 16. 주문 상태를 텍스트로만 표시해 진행 상황 파악 어려움
+
+**문제**
+
+주문 목록에서 배송 상태가 `"shipping"` 같은 텍스트 뱃지로만 표시되어 전체 배송 흐름에서 현재 단계가 어디인지 직관적으로 파악하기 어려웠습니다.
+
+**해결**
+
+주문 상태를 숫자 단계로 매핑하고, 4단계 타임라인으로 시각화했습니다. 현재 단계는 파란색으로 강조하고 연결선으로 진행 흐름을 표현했습니다.
+
+```typescript
+const statusStep: Record<OrderStatus, number> = {
+  pending: 1, paid: 2, shipping: 3, delivered: 4, cancelled: 0,
+};
+const steps = ['주문완료', '결제완료', '배송중', '배송완료'];
+
+{steps.map((label, idx) => {
+  const num = idx + 1;
+  const isActive = step >= num;
+  const isCurrent = step === num;
+  return (
+    <div key={label} className="flex items-center flex-1 last:flex-none">
+      <div className="flex flex-col items-center">
+        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+          ${isCurrent ? 'bg-blue-600 text-white' : isActive ? 'bg-blue-200 text-blue-700' : 'bg-gray-100 text-gray-400'}`}>
+          {num}
+        </div>
+        <span className={`text-[10px] mt-1 ${isCurrent ? 'text-blue-600 font-semibold' : isActive ? 'text-blue-400' : 'text-gray-400'}`}>
+          {label}
+        </span>
+      </div>
+      {idx < steps.length - 1 && (
+        <div className={`flex-1 h-0.5 mb-4 mx-1 ${step > num ? 'bg-blue-300' : 'bg-gray-100'}`} />
+      )}
+    </div>
+  );
+})}
+```
+
 <br/>
 
 ## 9. 로컬 실행 방법
