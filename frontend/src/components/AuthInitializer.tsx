@@ -6,6 +6,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
@@ -15,6 +16,7 @@ export default function AuthInitializer() {
   const setAuth = useAuthStore((s) => s.setAuth);
   const setInitialized = useAuthStore((s) => s.setInitialized);
   const fetchCart = useCartStore((s) => s.fetchCart);
+  const router = useRouter();
 
   useEffect(() => {
     axios
@@ -25,13 +27,14 @@ export default function AuthInitializer() {
       )
       .then(({ data }) => {
         setAuth(data.user, data.accessToken);
-        fetchCart(); // 세션 복원 시 장바구니도 같이 불러오기
+        router.refresh(); // 캐시된 미들웨어 리다이렉트 무효화
+        fetchCart();
       })
       .catch(() => {
         // 로그인 상태 아님 — 초기화 완료 표시만
         setInitialized();
       });
-  }, [setAuth, setInitialized, fetchCart]);
+  }, [setAuth, setInitialized, fetchCart, router]);
 
   return null;
 }
