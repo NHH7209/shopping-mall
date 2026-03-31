@@ -22,6 +22,7 @@ export default function AddressPage() {
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ label: '', recipient: '', phone: '', address: '' });
+  const [phoneError, setPhoneError] = useState('');
 
   const fetchAddresses = () => {
     api.get('/addresses').then(({ data }) => setAddresses(data)).catch(() => {});
@@ -31,6 +32,10 @@ export default function AddressPage() {
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!/^01[0-9]-\d{3,4}-\d{4}$/.test(form.phone)) {
+      setPhoneError('올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)');
+      return;
+    }
     setSubmitting(true);
     try {
       await api.post('/addresses', form);
@@ -104,10 +109,11 @@ export default function AddressPage() {
               type="text"
               required
               value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-900"
+              onChange={(e) => { setForm({ ...form, phone: e.target.value }); setPhoneError(''); }}
+              className={`w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-900 ${phoneError ? 'border-red-400' : 'border-gray-300'}`}
               placeholder="010-0000-0000"
             />
+            {phoneError && <p className="text-xs text-red-500 mt-1">{phoneError}</p>}
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">주소</label>
