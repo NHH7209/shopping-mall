@@ -48,7 +48,13 @@ export class AuthController {
   @Post('logout')
   async logout(@Req() req: any, @Res({ passthrough: true }) res: any) {
     await this.authService.logout((req.user as any).id);
-    res.clearCookie('refresh_token');
+    const isProduction = process.env.NODE_ENV === 'production';
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
+    });
     return { message: '로그아웃 되었습니다.' };
   }
 
