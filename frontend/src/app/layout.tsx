@@ -6,6 +6,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthInitializer from "@/components/AuthInitializer";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "BlueMe",
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <AuthInitializer />
+        <Toaster position="top-center" toastOptions={{ duration: 2500 }} />
         {children}
       </body>
     </html>

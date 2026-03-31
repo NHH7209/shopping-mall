@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import toast from 'react-hot-toast';
 
 interface Address {
   id: number;
@@ -36,8 +37,9 @@ export default function AddressPage() {
       setForm({ label: '', recipient: '', phone: '', address: '' });
       setShowForm(false);
       fetchAddresses();
+      toast.success('배송지가 추가됐습니다.');
     } catch {
-      alert('배송지 추가에 실패했습니다.');
+      toast.error('배송지 추가에 실패했습니다.');
     } finally {
       setSubmitting(false);
     }
@@ -52,6 +54,7 @@ export default function AddressPage() {
     if (!confirm('배송지를 삭제할까요?')) return;
     await api.delete(`/addresses/${id}`);
     fetchAddresses();
+    toast.success('배송지가 삭제됐습니다.');
   };
 
   return (
