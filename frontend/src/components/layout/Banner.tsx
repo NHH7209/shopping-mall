@@ -46,7 +46,7 @@ export default function Banner() {
   const next = () => setCurrent((c) => (c + 1) % banners.length);
 
   return (
-    <div className="w-full h-[420px] relative overflow-hidden mb-12">
+    <div className="w-full h-[220px] md:h-[420px] relative overflow-hidden mb-12">
       {banners.map((banner, idx) => (
         <div
           key={banner.id}
@@ -65,10 +65,10 @@ export default function Banner() {
 
           {/* 텍스트 */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <h2 className="text-3xl font-bold text-white mb-2 drop-shadow-md">
+            <h2 className="text-xl md:text-3xl font-bold text-white mb-2 drop-shadow-md">
               {banner.title}
             </h2>
-            <p className="text-white/90 text-lg drop-shadow-sm">{banner.description}</p>
+            <p className="text-white/90 text-sm md:text-lg drop-shadow-sm">{banner.description}</p>
           </div>
         </div>
       ))}

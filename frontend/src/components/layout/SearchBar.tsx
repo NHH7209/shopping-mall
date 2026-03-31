@@ -24,7 +24,7 @@ export default function SearchBar() {
   }
 
   return (
-    <div className="w-40 sm:w-64 md:w-80 lg:w-96 relative">
+    <div className="w-full relative">
       <input
         type="text"
         value={value}

@@ -150,7 +150,7 @@ function CheckoutContent() {
     <div className="max-w-4xl mx-auto px-6 py-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">주문 / 결제</h1>
 
-      <form onSubmit={handleSubmit} className="flex gap-8">
+      <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-8">
         <div className="flex-1 flex flex-col gap-5">
 
           {/* 주문 상품 */}
@@ -216,7 +216,7 @@ function CheckoutContent() {
             {/* 직접 입력 폼 */}
             {selectedAddressId === 'new' && (
               <div className="flex flex-col gap-3 pt-2 border-t border-gray-100">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">받는 분 *</label>
                     <input
@@ -263,8 +263,8 @@ function CheckoutContent() {
         </div>
 
         {/* 결제 요약 */}
-        <div className="w-72 flex-shrink-0">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-[160px]">
+        <div className="w-full md:w-72 md:flex-shrink-0">
+          <div className="bg-white border border-gray-200 rounded-xl p-6 md:sticky md:top-[160px]">
             <h2 className="text-base font-semibold text-gray-900 mb-4">결제 금액</h2>
             <div className="flex flex-col gap-3 text-sm text-gray-600 mb-6">
               <div className="flex justify-between">

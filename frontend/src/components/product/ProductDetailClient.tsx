@@ -78,11 +78,11 @@ export default function ProductDetailClient({ product }: { product: Product }) {
         </div>
       </div>
     )}
-    <div className="flex gap-12">
+    <div className="flex flex-col md:flex-row gap-6 md:gap-12">
       {/* 이미지 영역 */}
-      <div className="w-1/2">
+      <div className="w-full md:w-1/2">
         {/* 메인 이미지 */}
-        <div className="relative w-full h-[480px] bg-gray-100 rounded-2xl overflow-hidden mb-3">
+        <div className="relative w-full h-[300px] md:h-[480px] bg-gray-100 rounded-2xl overflow-hidden mb-3">
           {selectedImg ? (
             <Image
               src={selectedImg.url}
@@ -122,7 +122,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
       </div>
 
       {/* 상품 정보 */}
-      <div className="w-1/2 flex flex-col">
+      <div className="w-full md:w-1/2 flex flex-col">
         <div className="flex-1">
           {/* 카테고리 */}
           {product.category && (
@@ -132,12 +132,12 @@ export default function ProductDetailClient({ product }: { product: Product }) {
           )}
 
           {/* 상품명 */}
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
             {product.name}
           </h1>
 
           {/* 가격 */}
-          <p className="text-3xl font-bold text-gray-900 mb-6">
+          <p className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
             {product.price.toLocaleString("ko-KR")}
             <span className="text-xl ml-1">원</span>
           </p>

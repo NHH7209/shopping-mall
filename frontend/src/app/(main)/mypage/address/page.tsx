@@ -72,7 +72,7 @@ export default function AddressPage() {
           onSubmit={handleAdd}
           className="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-5 flex flex-col gap-3"
         >
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1">배송지 이름</label>
               <input

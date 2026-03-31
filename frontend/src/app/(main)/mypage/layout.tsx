@@ -20,8 +20,21 @@ export default function MypageLayout({
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-8">마이페이지</h1>
-      <div className="flex gap-8">
-        {/* 사이드 메뉴 */}
+      {/* 모바일: 가로 탭 */}
+      <nav className="flex md:hidden gap-1 overflow-x-auto scrollbar-none border-b border-gray-100 mb-6 pb-1">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="px-4 py-2 text-sm text-gray-600 whitespace-nowrap flex-shrink-0 hover:text-gray-900"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      {/* 데스크톱: 사이드 메뉴 + 콘텐츠 */}
+      <div className="hidden md:flex gap-8">
         <aside className="w-44 flex-shrink-0">
           <nav className="flex flex-col gap-1">
             {navItems.map((item) => (
@@ -35,10 +48,11 @@ export default function MypageLayout({
             ))}
           </nav>
         </aside>
-
-        {/* 콘텐츠 영역 */}
         <div className="flex-1">{children}</div>
       </div>
+
+      {/* 모바일: 콘텐츠 */}
+      <div className="md:hidden">{children}</div>
     </div>
   );
 }
