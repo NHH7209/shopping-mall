@@ -66,6 +66,7 @@ export default function Header() {
           {/* 장바구니 */}
           <Link
             href="/cart"
+            prefetch={false}
             className="relative text-sm text-gray-500 hover:text-blue-600"
           >
             장바구니
@@ -78,6 +79,7 @@ export default function Header() {
 
           <Link
             href="/order"
+            prefetch={false}
             className="text-sm text-gray-500 hover:text-blue-600 transition-colors"
           >
             주문 배송
