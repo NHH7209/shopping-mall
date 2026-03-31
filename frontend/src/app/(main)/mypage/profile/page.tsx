@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import api from '@/lib/api';
+import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
   const user = useAuthStore((s) => s.user);
@@ -24,7 +25,7 @@ export default function ProfilePage() {
     e.preventDefault();
 
     if (newPassword && newPassword !== newPasswordConfirm) {
-      alert('새 비밀번호가 일치하지 않습니다.');
+      toast.error('새 비밀번호가 일치하지 않습니다.');
       return;
     }
 
@@ -36,7 +37,7 @@ export default function ProfilePage() {
     }
 
     if (Object.keys(body).length === 0) {
-      alert('변경된 내용이 없습니다.');
+      toast('변경된 내용이 없습니다.');
       return;
     }
 
@@ -47,9 +48,9 @@ export default function ProfilePage() {
       setCurrentPassword('');
       setNewPassword('');
       setNewPasswordConfirm('');
-      alert('저장됐습니다.');
+      toast.success('저장됐습니다.');
     } catch (err: any) {
-      alert(err.response?.data?.message ?? '저장에 실패했습니다.');
+      toast.error(err.response?.data?.message ?? '저장에 실패했습니다.');
     } finally {
       setLoading(false);
     }

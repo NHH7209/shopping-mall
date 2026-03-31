@@ -703,6 +703,176 @@ const steps = ['주문완료', '결제완료', '배송중', '배송완료'];
 })}
 ```
 
+---
+
+### 17. 로그아웃 후 재로그인 시 refresh_token 쿠키 중복 생성
+
+**문제**
+
+로그아웃 후 다시 로그인하면 브라우저 쿠키에 `refresh_token`이 2개 생성됐습니다. 기존 쿠키가 삭제되지 않은 채로 새 쿠키가 추가되는 것이 원인이었습니다.
+
+**원인 분석**
+
+`res.clearCookie('refresh_token')`을 호출할 때 쿠키를 처음 설정할 때의 옵션(`httpOnly`, `secure`, `sameSite`, `path`)을 동일하게 전달하지 않으면 브라우저가 다른 쿠키로 인식해 삭제하지 않습니다.
+
+**해결**
+
+`clearCookie`에 쿠키 생성 시와 동일한 옵션을 명시했습니다.
+
+```typescript
+// 수정 전: 옵션 없이 clearCookie → 기존 쿠키 삭제 안 됨
+res.clearCookie('refresh_token');
+
+// 수정 후: 설정 시와 동일한 옵션 전달
+res.clearCookie('refresh_token', {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
+  path: '/',
+});
+```
+
+---
+
+### 18. 페이지 진입 시 인증 초기화 전 API 호출로 로그인 페이지 이동
+
+**문제**
+
+장바구니, 주문 배송 페이지 진입 시 로그인 상태임에도 로그인 페이지로 이동하는 현상이 간헐적으로 발생했습니다. `AuthInitializer`가 Refresh Token으로 세션을 복원하기 전에 페이지의 `useEffect`가 먼저 실행돼 인증되지 않은 상태로 API를 호출하는 것이 원인이었습니다.
+
+**해결**
+
+`authStore`에 `isInitialized` 상태를 추가하고, `AuthInitializer` 완료 후에만 페이지 API를 호출하도록 수정했습니다.
+
+```typescript
+// authStore: 초기화 완료 여부 추가
+isInitialized: false,
+setAuth: (user, accessToken) => set({ user, accessToken, isInitialized: true }),
+setInitialized: () => set({ isInitialized: true }),
+
+// AuthInitializer: 성공/실패 모두 초기화 완료 표시
+axios.post('/auth/refresh')
+  .then(({ data }) => { setAuth(data.user, data.accessToken); fetchCart(); })
+  .catch(() => { setInitialized(); }); // 비로그인 상태도 초기화 완료
+
+// 페이지: isInitialized 확인 후 API 호출
+const isInitialized = useAuthStore((s) => s.isInitialized);
+useEffect(() => {
+  if (!isInitialized) return;
+  fetchCart(); // 초기화 완료 후에만 실행
+}, [isInitialized]);
+```
+
+---
+
+### 19. Next.js Link 프리패치가 미들웨어 리다이렉트를 캐시해 로그인 후에도 로그인 페이지 이동
+
+**문제**
+
+로그인 후 장바구니, 주문 배송 링크를 클릭하면 정상 페이지 대신 로그인 페이지로 이동하는 문제가 발생했습니다. 로그인 상태는 정상이었지만 Next.js Router Cache에 이전의 미들웨어 리다이렉트 결과가 캐시돼 있어 로그인 이후에도 동일한 리다이렉트가 반환됐습니다.
+
+**원인 분석**
+
+Next.js `<Link>` 컴포넌트는 기본적으로 hover 시 대상 페이지를 프리패치합니다. 비로그인 상태에서 헤더에 마우스를 올리면 미들웨어가 `/auth/login`으로 리다이렉트하고, 이 결과가 Router Cache에 저장됩니다. 이후 로그인해도 캐시된 리다이렉트가 먼저 반환되는 것이 원인이었습니다.
+
+**해결**
+
+인증이 필요한 링크에 `prefetch={false}`를 적용해 프리패치를 비활성화했습니다.
+
+```typescript
+// 수정 전: 기본 prefetch → 비로그인 상태의 리다이렉트 결과가 캐시됨
+<Link href="/cart">장바구니</Link>
+
+// 수정 후: prefetch 비활성화
+<Link href="/cart" prefetch={false}>장바구니</Link>
+<Link href="/order" prefetch={false}>주문 배송</Link>
+```
+
+---
+
+### 17. 로그아웃 후 재로그인 시 refresh_token 쿠키 중복 생성
+
+**문제**
+
+로그아웃 후 다시 로그인하면 브라우저 쿠키에 `refresh_token`이 2개 생성됐습니다. 기존 쿠키가 삭제되지 않은 채로 새 쿠키가 추가되는 것이 원인이었습니다.
+
+**원인 분석**
+
+`res.clearCookie('refresh_token')`을 호출할 때 쿠키를 처음 설정할 때의 옵션(`httpOnly`, `secure`, `sameSite`, `path`)을 동일하게 전달하지 않으면 브라우저가 다른 쿠키로 인식해 삭제하지 않습니다.
+
+**해결**
+
+`clearCookie`에 쿠키 생성 시와 동일한 옵션을 명시했습니다.
+
+```typescript
+// 수정 전: 옵션 없이 clearCookie → 기존 쿠키 삭제 안 됨
+res.clearCookie('refresh_token');
+
+// 수정 후: 설정 시와 동일한 옵션 전달
+res.clearCookie('refresh_token', {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? 'none' : 'lax',
+  path: '/',
+});
+```
+
+---
+
+### 18. 페이지 진입 시 인증 초기화 전 API 호출로 로그인 페이지 이동
+
+**문제**
+
+장바구니, 주문 배송 페이지 진입 시 로그인 상태임에도 로그인 페이지로 이동하는 현상이 간헐적으로 발생했습니다. `AuthInitializer`가 Refresh Token으로 세션을 복원하기 전에 페이지의 `useEffect`가 먼저 실행돼 인증되지 않은 상태로 API를 호출하는 것이 원인이었습니다.
+
+**해결**
+
+`authStore`에 `isInitialized` 상태를 추가하고, `AuthInitializer` 완료 후에만 페이지 API를 호출하도록 수정했습니다.
+
+```typescript
+// authStore: 초기화 완료 여부 추가
+isInitialized: false,
+setAuth: (user, accessToken) => set({ user, accessToken, isInitialized: true }),
+setInitialized: () => set({ isInitialized: true }),
+
+// AuthInitializer: 성공/실패 모두 초기화 완료 표시
+axios.post('/auth/refresh')
+  .then(({ data }) => { setAuth(data.user, data.accessToken); fetchCart(); })
+  .catch(() => { setInitialized(); }); // 비로그인 상태도 초기화 완료
+
+// 페이지: isInitialized 확인 후 API 호출
+const isInitialized = useAuthStore((s) => s.isInitialized);
+useEffect(() => {
+  if (!isInitialized) return;
+  fetchCart(); // 초기화 완료 후에만 실행
+}, [isInitialized]);
+```
+
+---
+
+### 19. Next.js Link 프리패치가 미들웨어 리다이렉트를 캐시해 로그인 후에도 로그인 페이지 이동
+
+**문제**
+
+로그인 후 장바구니, 주문 배송 링크를 클릭하면 정상 페이지 대신 로그인 페이지로 이동하는 문제가 발생했습니다. 로그인 상태는 정상이었지만 Next.js Router Cache에 이전의 미들웨어 리다이렉트 결과가 캐시돼 있어 로그인 이후에도 동일한 리다이렉트가 반환됐습니다.
+
+**원인 분석**
+
+Next.js `<Link>` 컴포넌트는 기본적으로 hover 시 대상 페이지를 프리패치합니다. 비로그인 상태에서 헤더에 마우스를 올리면 미들웨어가 `/auth/login`으로 리다이렉트하고, 이 결과가 Router Cache에 저장됩니다. 이후 로그인해도 캐시된 리다이렉트가 먼저 반환되는 것이 원인이었습니다.
+
+**해결**
+
+인증이 필요한 링크에 `prefetch={false}`를 적용해 프리패치를 비활성화했습니다.
+
+```typescript
+// 수정 전: 기본 prefetch → 비로그인 상태의 리다이렉트 결과가 캐시됨
+<Link href="/cart">장바구니</Link>
+
+// 수정 후: prefetch 비활성화
+<Link href="/cart" prefetch={false}>장바구니</Link>
+<Link href="/order" prefetch={false}>주문 배송</Link>
+```
+
 >>>>>>> develop
 <br/>
 

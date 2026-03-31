@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import api from '@/lib/api';
 import { Product } from '@/types/product';
+import toast from 'react-hot-toast';
 
 interface ImageInput {
   url: string;
@@ -87,7 +88,7 @@ export default function AdminProductEditPage() {
       });
       router.push('/admin/products');
     } catch (err: any) {
-      alert(err.response?.data?.message ?? '수정에 실패했습니다.');
+      toast.error(err.response?.data?.message ?? '수정에 실패했습니다.');
     } finally {
       setLoading(false);
     }

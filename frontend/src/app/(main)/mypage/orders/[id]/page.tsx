@@ -10,6 +10,7 @@ import { useParams, useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Order, ORDER_STATUS_LABEL } from '@/types/order';
 import { useCartStore } from '@/store/cartStore';
+import toast from 'react-hot-toast';
 
 const statusColor: Record<string, string> = {
   pending:   'bg-blue-100 text-blue-700',
@@ -44,7 +45,7 @@ export default function OrderDetailPage() {
       const { data } = await api.patch(`/orders/${id}/cancel`);
       setOrder(data);
     } catch (err: any) {
-      alert(err?.response?.data?.message ?? '취소에 실패했습니다.');
+      toast.error(err?.response?.data?.message ?? '취소에 실패했습니다.');
     } finally {
       setCancelling(false);
     }
@@ -65,7 +66,7 @@ export default function OrderDetailPage() {
       await fetchCart();
       router.push('/checkout');
     } catch {
-      alert('장바구니 담기에 실패했습니다.');
+      toast.error('장바구니 담기에 실패했습니다.');
       setReordering(false);
     }
   };

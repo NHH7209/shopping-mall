@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
+import toast from 'react-hot-toast';
 
 interface Review {
   id: number;
@@ -35,8 +36,9 @@ export default function ReviewSection({ productId }: { productId: string }) {
       setForm({ rating: 5, content: '' });
       setShowForm(false);
       fetchReviews();
+      toast.success('리뷰가 등록됐습니다.');
     } catch (err: any) {
-      alert(err.response?.data?.message ?? '리뷰 작성에 실패했습니다.');
+      toast.error(err.response?.data?.message ?? '리뷰 작성에 실패했습니다.');
     } finally {
       setSubmitting(false);
     }
@@ -47,8 +49,9 @@ export default function ReviewSection({ productId }: { productId: string }) {
     try {
       await api.delete(`/reviews/${reviewId}`);
       fetchReviews();
+      toast.success('리뷰가 삭제됐습니다.');
     } catch {
-      alert('삭제에 실패했습니다.');
+      toast.error('삭제에 실패했습니다.');
     }
   };
 
