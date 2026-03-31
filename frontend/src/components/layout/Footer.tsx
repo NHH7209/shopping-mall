@@ -13,7 +13,7 @@ export default function Footer() {
   return (
     <footer className="w-full border-t border-gray-200 bg-white mt-20">
       <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="flex flex-col md:flex-row md:flex-wrap gap-8 md:gap-16 mb-10">
+        <div className="flex flex-col md:flex-row md:justify-between gap-8 mb-10">
           {/* 스킬 섹션 */}
           {Object.entries(skills).map(([category, items]) => (
             <div key={category}>
