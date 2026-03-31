@@ -19,7 +19,7 @@ export default function MainLayout({
     <>
       <Header />
       <NavigationMenu />
-      <main className="mt-[140px]">{children}</main>
+      <main className="mt-[104px] md:mt-[140px]">{children}</main>
       <Footer />
     </>
   );

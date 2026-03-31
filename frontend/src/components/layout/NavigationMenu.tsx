@@ -2,6 +2,8 @@
  * NavigationMenu.tsx
  * 헤더 하단 고정 네비게이션 바. 카테고리 드롭다운 메뉴와
  * 신상품·베스트·특가·기획전·브랜드·이벤트 링크를 제공한다.
+ * 모바일: top-14 (모바일 헤더 높이), 터치 클릭으로 카테고리 드롭다운 지원
+ * 데스크톱: top-24, 호버로 카테고리 드롭다운
  */
 "use client";
 
@@ -32,16 +34,18 @@ export default function NavigationMenu() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="w-full h-14 border-b border-gray-200 bg-white fixed top-24 z-50 flex items-center">
-      <div className="w-full max-w-[1200px] mx-auto px-8 flex items-center h-full">
+    <nav className="w-full h-12 md:h-14 border-b border-gray-200 bg-white fixed top-14 md:top-24 z-50 flex items-center">
+      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-8 flex items-center h-full">
         {/* 카테고리 드롭다운 */}
         <div
-          className="relative pr-12"
+          className="relative pr-6 md:pr-12"
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
         >
-          <button className="flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors pr-8 whitespace-nowrap flex-shrink-0">
-            {/* 햄버거 아이콘 */}
+          <button
+            className="flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors pr-4 md:pr-8 whitespace-nowrap flex-shrink-0"
+            onClick={() => setOpen((prev) => !prev)}
+          >
             <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -49,8 +53,6 @@ export default function NavigationMenu() {
           </button>
 
           {open && (
-            // 바깥 div: top-full에 바로 붙어서 hover 영역 끊김 방지
-            // pt-2로 시각적 간격만 줌 — mt-2 쓰면 그 gap에서 mouseLeave 발생
             <div className="absolute top-full -left-4 pt-2 z-50">
               <div className="bg-white border border-gray-200 rounded-md shadow-md w-56">
                 <div className="grid grid-cols-2">
@@ -58,6 +60,7 @@ export default function NavigationMenu() {
                     <Link
                       key={cat.label}
                       href={cat.href}
+                      onClick={() => setOpen(false)}
                       className="px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                     >
                       {cat.label}
@@ -70,7 +73,7 @@ export default function NavigationMenu() {
         </div>
 
         {/* 나머지 메뉴 */}
-        <div className="flex items-center gap-6 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-4 md:gap-6 overflow-x-auto scrollbar-none">
           {menus.map((menu) => (
             <Link
               key={menu.label}

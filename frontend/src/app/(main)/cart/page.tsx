@@ -40,7 +40,7 @@ export default function CartPage() {
           </Link>
         </div>
       ) : (
-        <div className="flex gap-8">
+        <div className="flex flex-col md:flex-row gap-8">
           {/* 상품 목록 */}
           <div className="flex-1 flex flex-col gap-4">
             {items.map((item) => {
@@ -106,8 +106,8 @@ export default function CartPage() {
           </div>
 
           {/* 주문 요약 */}
-          <div className="w-72 flex-shrink-0">
-            <div className="bg-white border border-gray-200 rounded-xl p-6 sticky top-[160px]">
+          <div className="w-full md:w-72 md:flex-shrink-0">
+            <div className="bg-white border border-gray-200 rounded-xl p-6 md:sticky md:top-[160px]">
               <h2 className="text-base font-semibold text-gray-900 mb-4">주문 요약</h2>
               <div className="flex flex-col gap-3 text-sm text-gray-600 mb-6">
                 <div className="flex justify-between">

@@ -13,7 +13,7 @@ export default function Footer() {
   return (
     <footer className="w-full border-t border-gray-200 bg-white mt-20">
       <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="flex gap-16 mb-10">
+        <div className="flex flex-wrap gap-8 md:gap-16 mb-10">
           {/* 스킬 섹션 */}
           {Object.entries(skills).map(([category, items]) => (
             <div key={category}>
@@ -35,8 +35,8 @@ export default function Footer() {
         </div>
 
         {/* 하단 링크 + 카피라이트 */}
-        <div className="border-t border-gray-100 pt-6 flex items-center justify-between">
-          <div className="flex gap-6">
+        <div className="border-t border-gray-100 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div className="flex flex-wrap gap-4 md:gap-6">
             <span className="text-xs text-gray-400">서비스 이용약관</span>
             <span className="text-xs text-gray-400">개인정보처리방침</span>
             <span className="text-xs text-gray-400">공지사항</span>
