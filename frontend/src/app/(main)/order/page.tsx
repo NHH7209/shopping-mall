@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { Order, ORDER_STATUS_LABEL, OrderStatus } from '@/types/order';
+import { useAuthStore } from '@/store/authStore';
 
 const statusColor: Record<OrderStatus, string> = {
   pending:   'bg-blue-100 text-blue-700',
@@ -31,13 +32,15 @@ const steps = ['주문완료', '결제완료', '배송중', '배송완료'];
 export default function OrderPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const isInitialized = useAuthStore((s) => s.isInitialized);
 
   useEffect(() => {
+    if (!isInitialized) return;
     api.get('/orders/my')
       .then(({ data }) => setOrders(data))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [isInitialized]);
 
   if (loading) {
     return (

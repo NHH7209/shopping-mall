@@ -8,14 +8,16 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useCartStore } from '@/store/cartStore';
+import { useAuthStore } from '@/store/authStore';
 
 export default function CartPage() {
   const { items, fetchCart, updateQuantity, removeItem } = useCartStore();
+  const isInitialized = useAuthStore((s) => s.isInitialized);
 
-  // 페이지 진입 시 최신 장바구니 불러오기
+  // AuthInitializer 완료 후 장바구니 불러오기 (동시 refresh 충돌 방지)
   useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+    if (isInitialized) fetchCart();
+  }, [isInitialized, fetchCart]);
 
   const totalPrice = items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,

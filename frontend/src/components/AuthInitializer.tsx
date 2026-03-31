@@ -13,6 +13,7 @@ import { useCartStore } from '@/store/cartStore';
 // 페이지 리로드 시 HttpOnly 쿠키의 refresh token으로 세션 복원
 export default function AuthInitializer() {
   const setAuth = useAuthStore((s) => s.setAuth);
+  const setInitialized = useAuthStore((s) => s.setInitialized);
   const fetchCart = useCartStore((s) => s.fetchCart);
 
   useEffect(() => {
@@ -27,9 +28,10 @@ export default function AuthInitializer() {
         fetchCart(); // 세션 복원 시 장바구니도 같이 불러오기
       })
       .catch(() => {
-        // 로그인 상태 아님 — 무시
+        // 로그인 상태 아님 — 초기화 완료 표시만
+        setInitialized();
       });
-  }, [setAuth, fetchCart]);
+  }, [setAuth, setInitialized, fetchCart]);
 
   return null;
 }

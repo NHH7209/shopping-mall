@@ -10,8 +10,10 @@ import { useCartStore } from './cartStore';
 interface AuthState {
   user: User | null;
   accessToken: string | null;
+  isInitialized: boolean;
   setAuth: (user: User, accessToken: string) => void;
   setAccessToken: (token: string) => void;
+  setInitialized: () => void;
   logout: () => void;
 }
 
@@ -29,11 +31,13 @@ function clearAuthCookie() {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   accessToken: null,
+  isInitialized: false,
   setAuth: (user, accessToken) => {
     setAuthCookie(user.role);
-    set({ user, accessToken });
+    set({ user, accessToken, isInitialized: true });
   },
   setAccessToken: (accessToken) => set({ accessToken }),
+  setInitialized: () => set({ isInitialized: true }),
   logout: () => {
     clearAuthCookie();
     useCartStore.getState().clearCart();
